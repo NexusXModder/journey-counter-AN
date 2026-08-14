@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICT & Network Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-user-select: none; user-select: none; }
+        body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 25px 20px 120px 20px; overflow-x: hidden; }
+        
+        .ict-container { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 24px; }
+
+        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 1.25rem; padding: 24px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; position: relative; overflow: hidden; }
+        .lab-card h3 { font-size: 0.95rem; color: #f43f5e; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .section-desc { font-size: 0.75rem; color: #8b949e; margin-top: 12px; line-height: 1.4; }
+
+        /* Custom Vector Icon Style */
+        .lab-icon { width: 18px; height: 18px; color: #f43f5e; display: inline-block; vertical-align: middle; }
+
+        /* Common Elements */
+        .action-btn { background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; padding: 8px 18px; border-radius: 0.75rem; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(244,63,94,0.3); }
+        .action-btn:active { transform: scale(0.95); }
+
+        /* 1. Love Logic Gate */
+        .gate-box { display: flex; justify-content: center; align-items: center; gap: 10px; margin: 15px 0; }
+        .gate-input { background: #0d1117; border: 1px solid #30363d; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; color: #5ccfe6; font-weight: 600; }
+        .gate-selector { background: #1f2937; color: #f43f5e; border: 1px solid #30363d; padding: 8px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; }
+        .gate-output { margin-top: 10px; font-size: 0.8rem; color: #5ccfe6; font-weight: 600; min-height: 20px; }
+
+        /* 2. Binary Message Encoder */
+        .text-input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 12px; outline: none; text-align: center; }
+        .binary-screen { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.75rem; color: #5ccfe6; word-break: break-all; min-height: 45px; margin-top: 10px; }
+
+        /* 3. Secure IP Connection */
+        .packet-box { width: 100%; background: rgba(255,255,255,0.02); border: 2px dashed #30363d; border-radius: 12px; padding: 12px; margin: 12px 0; font-family: monospace; font-size: 0.75rem; color: #5ccfe6; text-align: left; }
+        .ping-output { margin-top: 10px; font-size: 0.8rem; color: #f43f5e; font-weight: 600; min-height: 20px; }
+
+        /* Classical Style Bottom Info Panel */
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 520px;
+            text-align: center;
+            z-index: 10;
+            background: rgba(22, 27, 34, 0.9);
+            border: 1px solid #30363d;
+            padding: 12px 20px;
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .info-panel h2 { font-size: 0.95rem; color: #fff; font-weight: 700; letter-spacing: 0.5px; }
+        .info-panel p { font-size: 0.7rem; color: #8b949e; margin-top: 3px; }
+    </style>
+</head>
+<body>
+
+    <div class="ict-container">
+        
+        <!-- 1. Boolean Logic Gate -->
+        <div class="lab-card">
+            <h3>
+                BOOLEAN LOGIC GATE
+                <svg class="lab-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </h3>
+            <div class="gate-box">
+                <div class="gate-input">Ariyan</div>
+                <select class="gate-selector" id="logicGate">
+                    <option value="AND">AND</option>
+                    <option value="OR">OR</option>
+                    <option value="XOR">XOR</option>
+                </select>
+                <div class="gate-input">Nabila</div>
+            </div>
+            <button class="action-btn" onclick="evaluateLogic()">Evaluate Circuit</button>
+            <div class="gate-output" id="gateOutput">Click evaluate to process boolean logic!</div>
+            <div class="section-desc">
+                HSC ICT Chapter 3 digital logic circuit simulator.<br>
+                Evaluates relationship inputs through fundamental gates.<br>
+                Proves permanent active status with output TRUE (1).
+            </div>
+        </div>
+
+        <!-- 2. Binary Message Encoder -->
+        <div class="lab-card">
+            <h3>
+                BINARY MESSAGE ENCODER
+                <svg class="lab-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </h3>
+            <input type="text" id="userInputText" class="text-input" placeholder="Type a sweet message here..." value="Ariyan & Nabila Forever">
+            <button class="action-btn" onclick="encodeToBinary()">Convert to Binary</button>
+            <div class="binary-screen" id="binaryResult">01000001 01110010 01100001 01100110</div>
+            <div class="section-desc">
+                HSC ICT data communication and ASCII encoding module.<br>
+                Transforms custom text strings directly into machine code.<br>
+                Translates affection into unbreakable digital bits.
+            </div>
+        </div>
+
+        <!-- 3. Secure IP Connection Ping -->
+        <div class="lab-card">
+            <h3>
+                IP PROTOCOL ROUTING
+                <svg class="lab-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+            </h3>
+            <div class="packet-box">
+                SRC: 192.168.0.1 (Ariyan)<br>
+                DEST: 192.168.0.2 (Nabila)<br>
+                STATUS: Handshake Ready
+            </div>
+            <button class="action-btn" onclick="pingNetwork()">Ping Connection</button>
+            <div class="ping-output" id="pingText">Ready to transmit network packets.</div>
+            <div class="section-desc">
+                HSC ICT networking and data packet routing model.<br>
+                Simulates dedicated socket connection between nodes.<br>
+                Ensures zero latency and permanent link uptime.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Classical Bottom Info Panel -->
+    <div class="info-panel">
+        <h2>ICT & NETWORK LABORATORY</h2>
+        <p>Boolean Logic • Binary Encoding • IP Protocol Routing</p>
+    </div>
+
+    <script>
+        function evaluateLogic() {
+            const gate = document.getElementById('logicGate').value;
+            const output = document.getElementById('gateOutput');
+            output.textContent = `Gate [${gate}]: Output = 1 (TRUE / 100% Unconditional Love)`;
+        }
+
+        function encodeToBinary() {
+            const text = document.getElementById('userInputText').value;
+            let binary = "";
+            for (let i = 0; i < text.length; i++) {
+                binary += text[i].charCodeAt(0).toString(2).padStart(8, '0') + " ";
+            }
+            document.getElementById('binaryResult').textContent = binary.trim();
+        }
+
+        function pingNetwork() {
+            const pingText = document.getElementById('pingText');
+            pingText.textContent = "PING 192.168.0.2: 32 bytes | Time<1ms | TTL=255 (Secure)";
+        }
+    </script>
+</body>
+</html>

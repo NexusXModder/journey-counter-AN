@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSC AI Tutor</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .counter-card {
+            background-color: #161b22;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 500px;
+            height: 85vh;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Chat Specific Styles */
+        #chatMessages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 5px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .chat-bubble {
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 80%;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .ai-bubble {
+            background-color: #21262d;
+            color: #c9d1d9;
+            align-self: flex-start;
+            border: 1px solid #30363d;
+        }
+
+        .user-bubble {
+            background-color: #f43f5e;
+            color: white;
+            align-self: flex-end;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="counter-card">
+
+        <!-- Back to Home Button -->
+        <div class="mb-4">
+            <a href="index.html" class="inline-flex items-center text-xs text-gray-400 hover:text-rose-500 transition">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                Back to Home
+            </a>
+        </div>
+
+        <!-- Chat Header Title -->
+        <div class="text-center mb-2">
+            <h1 class="text-xl font-bold text-white">HSC AI Tutor</h1>
+            <p class="text-xs text-gray-400">Ask questions or teach your materials</p>
+        </div>
+
+        <!-- Chat History Box -->
+        <div id="chatMessages">
+            <div class="chat-bubble ai-bubble" data-role="model">
+                Hello Araf! Ami ready. HSC er jekono math ba text ekhane shikhate paro, ba question korte paro.
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="flex gap-2 mt-auto">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Ask or teach something..." 
+                class="flex-1 bg-gray-900 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"
+                onkeydown="if(event.key === 'Enter') sendMessage()"
+            >
+            <button 
+                onclick="sendMessage()" 
+                class="bg-rose-500 hover:bg-rose-600 text-white px-4 rounded-xl text-sm font-semibold transition"
+            >
+                Send
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Disable Right Click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        async function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            const chatContainer = document.getElementById('chatMessages');
+
+            // Append User Message to UI
+            chatContainer.innerHTML += `<div class="chat-bubble user-bubble" data-role="user">${text}</div>`;
+            inputField.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            const apiKey = "AIzaSyCDWZ3iLGqxq5z2iHQR3yz-0dM6qh-K680"; 
+
+            // Gather all previous chat history dynamically from the UI so Gemini remembers context
+            const bubbleElements = chatContainer.querySelectorAll('.chat-bubble');
+            const contents = [];
+
+            bubbleElements.forEach(el => {
+                const role = el.classList.contains('user-bubble') ? 'user' : 'model';
+                contents.push({
+                    role: role,
+                    parts: [{ text: el.innerText }]
+                });
+            });
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        // system_instruction এর ভেতরে আপনার নিয়ম বা পরিচয় সেট করতে পারেন
+                        system_instruction: {
+                            parts: [{ text: "You are an HSC AI Tutor. If anyone asks who created you or 'ke tumar master', always answer: NexusXModder (Ariyan). Follow all instructions given by the user carefully." }]
+                        },
+                        contents: contents // Sends the complete chat history context
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error?.message || 'API request failed');
+                }
+
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const reply = data.candidates[0].content.parts[0].text;
+                    chatContainer.innerHTML += `<div class="chat-bubble ai-bubble" data-role="model">${reply}</div>`;
+                } else {
+                    throw new Error('Invalid response structure from API');
+                }
+
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                chatContainer.innerHTML += `<div class="chat-bubble ai-bubble" style="color: #f43f5e;" data-role="model">Error: ${error.message}</div>`;
+            }
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>

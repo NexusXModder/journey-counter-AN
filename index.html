@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Journey Tracker</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .counter-card {
+            background-color: #161b22;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            width: 500px;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid #30363d;
+            animation: fadeIn 1s ease-out;
+            position: relative;
+        }
+
+        /* Menu Button Container */
+        .menu-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            cursor: pointer;
+            width: 22px;
+            height: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .menu-btn span {
+            display: block;
+            height: 2.5px;
+            width: 100%;
+            background-color: #8b949e;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .menu-btn:hover span {
+            background-color: #f43f5e;
+        }
+
+        /* Tip Bubble positioned directly underneath the 3 lines (Stays until clicked) */
+        .tip-bubble {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            background: #21262d;
+            color: #8b949e;
+            font-size: 0.62rem;
+            font-weight: 500;
+            padding: 3px 7px;
+            border-radius: 5px;
+            border: 1px solid #30363d;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Small arrow pointing upwards towards the 3 lines */
+        .tip-bubble::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 8px;
+            width: 5px;
+            height: 5px;
+            background: #21262d;
+            border-top: 1px solid #30363d;
+            border-left: 1px solid #30363d;
+            transform: rotate(45deg);
+        }
+
+        /* Slide-out Drawer */
+        .nav-drawer {
+            height: 100%;
+            width: 280px;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: -280px;
+            background-color: #161b22;
+            border-right: 1px solid #30363d;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.7);
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding-top: 60px;
+        }
+
+        .nav-drawer.open {
+            left: 0;
+        }
+
+        .nav-drawer .drawer-header {
+            padding: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 10px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-drawer a {
+            padding: 14px 20px;
+            color: #c9d1d9;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: background 0.2s, color 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-drawer a:hover {
+            background-color: #21262d;
+            color: #f43f5e;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #f43f5e;
+        }
+
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            display: none;
+        }
+
+        .backdrop.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .counter-unit {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .counter-unit {
+                width: calc(33.333% - 1rem);
+                margin-bottom: 0;
+            }
+        }
+
+        .pulse-heart {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="backdrop" class="backdrop" onclick="toggleMenu()"></div>
+
+    <!-- Slide-out Drawer Navigation -->
+    <div id="navDrawer" class="nav-drawer">
+        <div class="drawer-header">Navigation Tools</div>
+        <a href="index.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            </span>
+            Home Dashboard
+        </a>
+        <a href="heartanimation.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            </span>
+            Biological Waveform Dynamics 
+        </a>
+        <a href="quantum.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </span>
+            Quantum Entanglement
+        </a>
+        <a href="chemistry.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </span>
+            Cellular Synthesis Chamber  
+        </a>
+        <a href="ict.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+            </span>
+            Cybernetic Logic Matrix
+        </a>
+        <a href="memories.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </span>
+            Private Memories
+        </a>
+        <!-- Added HSC AI Tutor Link -->
+        <a href="Aibot.html">
+            <span class="nav-icon">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            </span>
+            HSC AI Tutor
+        </a>
+    </div>
+
+    <div class="counter-card">
+
+        <!-- Menu Container with 3-Lines and Persistent Tip -->
+        <div class="menu-container" onclick="toggleMenu()">
+            <div class="menu-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="tip-bubble" id="tipBubble">Tap for features</div>
+        </div>
+
+        <div class="text-center mb-8">
+
+            <svg
+                class="w-12 h-12 text-pink-500 mx-auto pulse-heart"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <path
+                    fill-rule="evenodd"
+                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                    clip-rule="evenodd"
+                ></path>
+            </svg>
+
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-white mt-3">
+                Our Love Journey
+            </h1>
+
+            <p class="text-sm text-gray-400 mt-1">
+                Celebrating every moment since Feb 25, 2025
+            </p>
+
+        </div>
+
+        <div
+            id="counterDisplay"
+            class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center"
+        >
+
+            <div
+                id="years"
+                class="counter-unit bg-gray-800 p-4 rounded-xl shadow-lg transition duration-300 hover:scale-[1.02]"
+            >
+                <div class="text-3xl font-bold text-pink-400 counter-number">
+                    00
+                </div>
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mt-1">
+                    Years
+                </div>
+            </div>
+
+            <div
+                id="months"
+                class="counter-unit bg-gray-800 p-4 rounded-xl shadow-lg transition duration-300 hover:scale-[1.02]"
+            >
+                <div class="text-3xl font-bold text-pink-400 counter-number">
+                    00
+                </div>
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mt-1">
+                    Months
+                </div>
+            </div>
+
+            <div
+                id="days"
+                class="counter-unit bg-gray-800 p-4 rounded-xl shadow-lg transition duration-300 hover:scale-[1.02]"
+            >
+                <div class="text-3xl font-bold text-pink-400 counter-number">
+                    00
+                </div>
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mt-1">
+                    Days
+                </div>
+            </div>
+
+            <div
+                id="hours"
+                class="counter-unit bg-gray-800 p-4 rounded-xl shadow-lg transition duration-300 hover:scale-[1.02]"
+            >
+                <div class="text-3xl font-bold text-teal-400 counter-number">
+                    00
+                </div>
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mt-1">
+                    Hours
+                </div>
+            </div>
+
+            <div
+                id="minutes"
+                class="counter-unit bg-gray-800 p-4 rounded-xl shadow-lg transition duration-300 hover:scale-[1.02]"
+            >
+                <div class="text-3xl font-bold text-teal-400 counter-number">
+                    00
+                </div>
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mt-1">
+                    Minutes
+                </div>
+            </div>
+
+            <div
+                id="seconds"
+                class="counter-unit bg-gray-800 p-4 rounded-xl shadow-lg transition duration-300 hover:scale-[1.02]"
+            >
+                <div class="text-3xl font-bold text-teal-400 counter-number">
+                    00
+                </div>
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mt-1">
+                    Seconds
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-6 text-center">
+
+            <div
+                id="daysTogether"
+                class="text-2xl font-bold text-white"
+            >
+                0 Days Together
+            </div>
+
+            <div
+                id="totalTime"
+                class="text-sm text-gray-400 mt-1"
+            >
+                0 Hours • 0 Minutes
+            </div>
+
+        </div>
+
+        <div class="mt-8">
+
+            <div class="bg-gray-800 p-5 rounded-xl shadow-lg text-center">
+
+                <div class="text-xs uppercase text-gray-400 tracking-wider mb-2">
+                    Our Next Milestone
+                </div>
+
+                <div
+                    id="milestoneTitle"
+                    class="text-xl font-bold text-white"
+                >
+                    Our 2nd Anniversary
+                </div>
+
+                <div
+                    id="milestoneDate"
+                    class="text-sm text-gray-400 mt-1"
+                >
+                    February 25, 2027
+                </div>
+
+                <div class="text-base font-semibold text-gray-300 mt-4 mb-2">
+                    Time Left:
+                </div>
+
+                <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
+
+                    <div class="bg-gray-900 rounded-lg p-3">
+                        <div
+                            id="milestoneDays"
+                            class="text-2xl font-bold text-pink-400"
+                        >
+                            00
+                        </div>
+
+                        <div class="text-[10px] uppercase text-gray-500 tracking-wider mt-1">
+                            Days
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900 rounded-lg p-3">
+                        <div
+                            id="milestoneHours"
+                            class="text-2xl font-bold text-teal-400"
+                        >
+                            00
+                        </div>
+
+                        <div class="text-[10px] uppercase text-gray-500 tracking-wider mt-1">
+                            Hours
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900 rounded-lg p-3">
+                        <div
+                            id="milestoneMinutes"
+                            class="text-2xl font-bold text-teal-400"
+                        >
+                            00
+                        </div>
+
+                        <div class="text-[10px] uppercase text-gray-500 tracking-wider mt-1">
+                            Minutes
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-900 rounded-lg p-3">
+                        <div
+                            id="milestoneSeconds"
+                            class="text-2xl font-bold text-teal-400"
+                        >
+                            00
+                        </div>
+
+                        <div class="text-[10px] uppercase text-gray-500 tracking-wider mt-1">
+                            Seconds
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-gray-700 text-center">
+            <p class="text-xs text-gray-500 font-medium tracking-wide">
+                Time is the measure of our growth. Every second counts.
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Disable Right Click & Inspect Shortcuts
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's')) {
+                e.preventDefault();
+            }
+        });
+
+        function toggleMenu() {
+            const drawer = document.getElementById("navDrawer");
+            const backdrop = document.getElementById("backdrop");
+            drawer.classList.toggle("open");
+            backdrop.classList.toggle("active");
+
+            // Removes the tip bubble permanently only when the menu is clicked
+            const bubble = document.getElementById('tipBubble');
+            if (bubble) bubble.remove();
+        }
+
+        const START_DATE = new Date('2025-02-25T00:00:00+06:00');
+
+        const elements = {
+            years: document.querySelector('#years .counter-number'),
+            months: document.querySelector('#months .counter-number'),
+            days: document.querySelector('#days .counter-number'),
+            hours: document.querySelector('#hours .counter-number'),
+            minutes: document.querySelector('#minutes .counter-number'),
+            seconds: document.querySelector('#seconds .counter-number')
+        };
+
+        const summaryElements = {
+            days: document.querySelector('#daysTogether'),
+            totalTime: document.querySelector('#totalTime')
+        };
+
+        const milestoneElements = {
+            title: document.querySelector('#milestoneTitle'),
+            date: document.querySelector('#milestoneDate'),
+            days: document.querySelector('#milestoneDays'),
+            hours: document.querySelector('#milestoneHours'),
+            minutes: document.querySelector('#milestoneMinutes'),
+            seconds: document.querySelector('#milestoneSeconds')
+        };
+
+        function pad(number) {
+            return number < 10 ? '0' + number : number.toString();
+        }
+
+        function calculateDuration(start, end) {
+            let years = end.getFullYear() - start.getFullYear();
+            let months = end.getMonth() - start.getMonth();
+            let days = end.getDate() - start.getDate();
+            let hours = end.getHours() - start.getHours();
+            let minutes = end.getMinutes() - start.getMinutes();
+            let seconds = end.getSeconds() - start.getSeconds();
+
+            if (seconds < 0) {
+                seconds += 60;
+                minutes--;
+            }
+
+            if (minutes < 0) {
+                minutes += 60;
+                hours--;
+            }
+
+            if (hours < 0) {
+                hours += 24;
+                days--;
+            }
+
+            if (days < 0) {
+                months--;
+                const previousMonthDays = new Date(
+                    end.getFullYear(),
+                    end.getMonth(),
+                    0
+                ).getDate();
+                days += previousMonthDays;
+            }
+
+            if (months < 0) {
+                months += 12;
+                years--;
+            }
+
+            return {
+                years: years,
+                months: months,
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds
+            };
+        }
+
+        function updateCounter() {
+            const now = new Date();
+
+            if (now < START_DATE) {
+                elements.years.textContent = '00';
+                elements.months.textContent = '00';
+                elements.days.textContent = '00';
+                elements.hours.textContent = '00';
+                elements.minutes.textContent = '00';
+                elements.seconds.textContent = '00';
+
+                summaryElements.days.textContent = '0 Days Together';
+                summaryElements.totalTime.textContent = '0 Hours • 0 Minutes';
+                return;
+            }
+
+            const duration = calculateDuration(START_DATE, now);
+
+            elements.years.textContent = pad(duration.years);
+            elements.months.textContent = pad(duration.months);
+            elements.days.textContent = pad(duration.days);
+            elements.hours.textContent = pad(duration.hours);
+            elements.minutes.textContent = pad(duration.minutes);
+            elements.seconds.textContent = pad(duration.seconds);
+
+            const elapsedMilliseconds = now.getTime() - START_DATE.getTime();
+            const totalMinutes = Math.floor(elapsedMilliseconds / 60000);
+            const totalHours = Math.floor(elapsedMilliseconds / 3600000);
+            const totalDays = Math.floor(elapsedMilliseconds / 86400000);
+
+            summaryElements.days.textContent = totalDays.toLocaleString() + ' Days Together';
+            summaryElements.totalTime.textContent = totalHours.toLocaleString() + ' Hours • ' + totalMinutes.toLocaleString() + ' Minutes';
+        }
+
+        function getNextAnniversary(now) {
+            let year = now.getFullYear();
+            let anniversary = new Date(year, 1, 25, 0, 0, 0, 0);
+
+            if (anniversary <= now) {
+                year++;
+                anniversary = new Date(year, 1, 25, 0, 0, 0, 0);
+            }
+
+            return anniversary;
+        }
+
+        function getOrdinal(number) {
+            if (number % 100 >= 11 && number % 100 <= 13) {
+                return number + 'th';
+            }
+            if (number % 10 === 1) {
+                return number + 'st';
+            }
+            if (number % 10 === 2) {
+                return number + 'nd';
+            }
+            if (number % 10 === 3) {
+                return number + 'rd';
+            }
+            return number + 'th';
+        }
+
+        function updateMilestone() {
+            const now = new Date();
+            const milestone = getNextAnniversary(now);
+            const anniversaryNumber = milestone.getFullYear() - START_DATE.getFullYear();
+
+            milestoneElements.title.textContent = 'Our ' + getOrdinal(anniversaryNumber) + ' Anniversary';
+            milestoneElements.date.textContent = milestone.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+            const difference = milestone.getTime() - now.getTime();
+            const totalSeconds = Math.floor(difference / 1000);
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            milestoneElements.days.textContent = pad(days);
+            milestoneElements.hours.textContent = pad(hours);
+            milestoneElements.minutes.textContent = pad(minutes);
+            milestoneElements.seconds.textContent = pad(seconds);
+        }
+
+        function updateEverything() {
+            updateCounter();
+            updateMilestone();
+        }
+
+        updateEverything();
+        setInterval(updateEverything, 1000);
+    </script>
+
+</body>
+</html>

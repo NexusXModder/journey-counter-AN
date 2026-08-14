@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry of Love Lab - Le Chatelier's Equilibrium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-user-select: none; user-select: none; }
+        body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 25px 20px 120px 20px; overflow-x: hidden; }
+        
+        .chem-container { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 24px; }
+
+        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 1.25rem; padding: 24px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; position: relative; overflow: hidden; }
+        .lab-card h3 { font-size: 0.95rem; color: #f43f5e; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 14px; }
+        .section-desc { font-size: 0.75rem; color: #8b949e; margin-top: 12px; line-height: 1.4; }
+
+        /* 1. Love Potion Mixer */
+        .ingredient-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .chip { background: #0d1117; border: 1px solid #30363d; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; color: #5ccfe6; cursor: pointer; transition: 0.2s; }
+        .chip.selected { background: #f43f5e; color: #fff; border-color: #f43f5e; box-shadow: 0 0 10px rgba(244,63,94,0.4); }
+        .beaker-box { width: 70px; height: 90px; border: 3px solid #30363d; border-top: none; border-radius: 0 0 15px 15px; margin: 0 auto 15px auto; position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
+        .potion-liquid { width: 100%; height: 0%; background: linear-gradient(180deg, #f43f5e, #881337); transition: height 0.5s ease; position: relative; }
+        .action-btn { background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; padding: 8px 18px; border-radius: 0.75rem; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(244,63,94,0.3); }
+        .action-btn:active { transform: scale(0.95); }
+        .potion-output { margin-top: 10px; font-size: 0.8rem; color: #5ccfe6; min-height: 20px; font-weight: 500; }
+
+        /* 2. Interactive Bohr Orbit */
+        .bohr-container { width: 150px; height: 150px; margin: 10px auto; position: relative; display: flex; align-items: center; justify-content: center; }
+        .nucleus { width: 45px; height: 45px; background: radial-gradient(circle, #f43f5e 0%, #881337 100%); border-radius: 50%; color: #fff; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #f43f5e; z-index: 2; }
+        .orbit { position: absolute; border: 1px dashed #30363d; border-radius: 50%; animation: spinOrbit 6s linear infinite; }
+        .orbit-1 { width: 110px; height: 110px; }
+        .orbit-2 { width: 150px; height: 150px; animation-direction: reverse; animation-duration: 9s; }
+        .electron { position: absolute; width: 10px; height: 10px; background: #5ccfe6; border-radius: 50%; box-shadow: 0 0 8px #5ccfe6; top: -5px; left: 50%; transform: translateX(-50%); }
+        @keyframes spinOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .speed-slider { width: 80%; margin: 10px auto 0 auto; accent-color: #f43f5e; display: block; cursor: pointer; }
+
+        /* 3. HSC Le Chatelier's Equilibrium Chamber */
+        .chamber-box { width: 100%; height: 80px; background: rgba(255,255,255,0.02); border: 2px dashed #30363d; border-radius: 12px; margin: 12px auto; display: flex; align-items: center; justify-content: space-around; padding: 0 15px; position: relative; }
+        .chamber-atom { width: 38px; height: 38px; background: #1f2937; border: 2px solid #5ccfe6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; color: #5ccfe6; transition: 0.4s; }
+        .equilibrium-arrow { font-size: 1.2rem; color: #f43f5e; font-weight: 800; animation: pulseArrow 1.5s infinite; }
+        @keyframes pulseArrow { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+        .product-badge { background: rgba(244,63,94,0.15); border: 1px solid #f43f5e; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        
+        /* Custom Shimmering/Gleaming Heart Styles */
+        .shimmer-heart { width: 26px; height: 26px; animation: shimmerPulse 1.5s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(244,63,94,0.8)); }
+        @keyframes shimmerPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(244,63,94,0.6)); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 12px rgba(244,63,94,1)); }
+        }
+        .sparkle-star { animation: starRotate 3s linear infinite; transform-origin: center; }
+        @keyframes starRotate {
+            0% { transform: rotate(0deg) scale(0.8); opacity: 0.7; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
+            100% { transform: rotate(360deg) scale(0.8); opacity: 0.7; }
+        }
+
+        .equilibrium-output { margin-top: 10px; font-size: 0.8rem; color: #5ccfe6; font-weight: 600; min-height: 20px; }
+
+        /* Classical Style Bottom Info Panel */
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 520px;
+            text-align: center;
+            z-index: 10;
+            background: rgba(22, 27, 34, 0.9);
+            border: 1px solid #30363d;
+            padding: 12px 20px;
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .info-panel h2 { font-size: 0.95rem; color: #fff; font-weight: 700; letter-spacing: 0.5px; }
+        .info-panel p { font-size: 0.7rem; color: #8b949e; margin-top: 3px; }
+    </style>
+</head>
+<body>
+
+    <div class="chem-container">
+        
+        <!-- 1. Love Potion Mixer -->
+        <div class="lab-card">
+            <h3>LOVE POTION MIXER (LAB EXPERIMENT)</h3>
+            <div class="ingredient-chips">
+                <div class="chip" onclick="toggleIngredient(this, 'Trust')">Trust</div>
+                <div class="chip" onclick="toggleIngredient(this, 'Romance')">Romance</div>
+                <div class="chip" onclick="toggleIngredient(this, 'Care')">Care</div>
+                <div class="chip" onclick="toggleIngredient(this, 'Madness')">Madness</div>
+            </div>
+            <div class="beaker-box">
+                <div class="potion-liquid" id="potionLiquid"></div>
+            </div>
+            <button class="action-btn" onclick="synthesizePotion()">Synthesize Reaction</button>
+            <div class="potion-output" id="potionOutput">Select ingredients & mix to test reaction!</div>
+            <div class="section-desc">Interactive synthesis module. Select multiple components and trigger chemical mixing to synthesize custom emotional compounds.</div>
+        </div>
+
+        <!-- 2. Interactive Bohr Electron Model -->
+        <div class="lab-card">
+            <h3>BOHR ATOMIC ORBIT (SPIN CONTROL)</h3>
+            <div class="bohr-container">
+                <div class="orbit orbit-1" id="orbit1"><div class="electron"></div></div>
+                <div class="orbit orbit-2" id="orbit2"><div class="electron"></div></div>
+                <div class="nucleus">A&N</div>
+            </div>
+            <input type="range" min="1" max="15" value="6" class="speed-slider" id="speedSlider" oninput="changeOrbitSpeed(this.value)">
+            <div class="section-desc">Dynamic atomic configuration. Use the slider manually to increase or decrease electron rotation velocity around the core.</div>
+        </div>
+
+        <!-- 3. HSC Le Chatelier's Equilibrium Chamber -->
+        <div class="lab-card">
+            <h3>LE CHATELIER'S EQUILIBRIUM CHAMBER</h3>
+            <div class="chamber-box">
+                <div class="chamber-atom" id="atomA">A</div>
+                <span style="color: #8b949e; font-weight: bold;">+</span>
+                <div class="chamber-atom" id="atomN">N</div>
+                <div class="equilibrium-arrow">⇌</div>
+                <div class="product-badge">
+                    <!-- Custom Shimmering/Gleaming Heart SVG -->
+                    <svg class="shimmer-heart" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#heartGradient)"/>
+                        <!-- Sparkle / Shimmer Stars -->
+                        <path class="sparkle-star" d="M18 5L18.5 6.5L20 7L18.5 7.5L18 9L17.5 7.5L16 7L17.5 6.5L18 5Z" fill="#ffffff"/>
+                        <path class="sparkle-star" style="animation-delay: 1.5s;" d="M6 12L6.3 12.8L7.1 13.1L6.3 13.4L6 14.2L5.7 13.4L4.9 13.1L5.7 12.8L6 12Z" fill="#5ccfe6"/>
+                        <defs>
+                            <linearGradient id="heartGradient" x1="2" y1="3" x2="22" y2="21.35" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#ff5864"/>
+                                <stop offset="1" stop-color="#f43f5e"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+            <button class="action-btn" onclick="applyEquilibriumStress()">Apply External Stress</button>
+            <div class="equilibrium-output" id="equilibriumText">System in perfect dynamic equilibrium (Kc = ∞)</div>
+            <div class="section-desc">HSC Chemistry principle simulation. Applying external pressure or stress shifts the system entirely toward forward reaction, proving bond indestructibility.</div>
+        </div>
+
+    </div>
+
+    <!-- Classical Bottom Info Panel -->
+    <div class="info-panel">
+        <h2>CHEMISTRY OF LOVE LABORATORY</h2>
+        <p>Potion Synthesis • Atomic Orbits • Le Chatelier's Equilibrium</p>
+    </div>
+
+    <script>
+        // 1. Potion Mixer Logic
+        let selectedCount = 0;
+        function toggleIngredient(element, name) {
+            element.classList.toggle('selected');
+            if(element.classList.contains('selected')) {
+                selectedCount++;
+            } else {
+                selectedCount--;
+            }
+            let heightPercent = selectedCount * 25;
+            document.getElementById('potionLiquid').style.height = heightPercent + '%';
+        }
+
+        function synthesizePotion() {
+            const output = document.getElementById('potionOutput');
+            if(selectedCount === 0) {
+                output.textContent = "Please select at least one ingredient first!";
+            } else if(selectedCount < 3) {
+                output.textContent = "Reaction incomplete! Add more ingredients for full synthesis.";
+            } else {
+                output.textContent = "SUCCESS! Perfect Unconditional Love Compound Formed!";
+            }
+        }
+
+        // 2. Bohr Orbit Speed Control
+        function changeOrbitSpeed(val) {
+            const o1 = document.getElementById('orbit1');
+            const o2 = document.getElementById('orbit2');
+            o1.style.animationDuration = (16 - val) + 's';
+            o2.style.animationDuration = (19 - val) + 's';
+        }
+
+        // 3. Le Chatelier's Stress Equilibrium Logic
+        let stressClickCount = 0;
+        function applyEquilibriumStress() {
+            stressClickCount++;
+            const atomA = document.getElementById('atomA');
+            const atomN = document.getElementById('atomN');
+            const text = document.getElementById('equilibriumText');
+
+            atomA.style.borderColor = "#f43f5e";
+            atomA.style.color = "#f43f5e";
+            atomN.style.borderColor = "#f43f5e";
+            atomN.style.color = "#f43f5e";
+
+            if(stressClickCount % 2 === 1) {
+                text.textContent = "Stress Applied! Le Chatelier's shift: 100% Forward (Maximum Affection Yield)";
+            } else {
+                text.textContent = "Equilibrium Restored: External stress neutralized instantly!";
+                atomA.style.borderColor = "#5ccfe6";
+                atomA.style.color = "#5ccfe6";
+                atomN.style.borderColor = "#5ccfe6";
+                atomN.style.color = "#5ccfe6";
+            }
+        }
+    </script>
+</body>
+</html>
