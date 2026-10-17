@@ -12,7 +12,17 @@
 :root{color-scheme:dark;--cyan:#75f6ff;--blue:#6a8dff;--pink:#ff547f;--ink:#070912;--muted:#8290ac;--line:rgba(153,183,255,.16)}
 *{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--ink);color:#edf4ff;font-family:"Space Grotesk",sans-serif}body{min-height:100svh}
 #stage{position:fixed;inset:0;isolation:isolate;background:radial-gradient(ellipse at 50% 48%,#111a36 0%,#090d1b 45%,#05060d 100%)}
-#stage canvas{display:block;width:100%;height:100%;outline:0}
+#stage canvas{display:block;width:100%;height:100%;outline:0;opacity:0;transition:opacity .22s ease}
+#stage.webgl-ready canvas{opacity:1}
+.boot-bridge{position:absolute;z-index:1;left:35%;top:52%;width:30%;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,transparent,#ff547f 18%,#b6aaff 50%,#75f6ff 82%,transparent);box-shadow:0 0 12px #8cbbff,0 0 28px #526cff;animation:bridgePulse 1.8s ease-in-out infinite;pointer-events:none}
+@keyframes bridgePulse{0%,100%{opacity:.48;filter:brightness(.85)}50%{opacity:1;filter:brightness(1.45)}}
+.boot-core{position:absolute;z-index:1;left:36%;top:52%;width:clamp(72px,9vw,124px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;opacity:1;transition:opacity .22s ease;background:radial-gradient(circle at 38% 34%,rgba(255,255,255,.9) 0 1%,rgba(255,92,139,.78) 7%,rgba(255,44,105,.28) 34%,rgba(255,50,120,.07) 61%,transparent 72%);box-shadow:inset 0 0 22px #ff4d8340,0 0 24px #ff4d8340}
+.boot-core::before,.boot-core::after{content:"";position:absolute;inset:-13%;border:1px solid rgba(255,91,145,.7);border-radius:50%;transform:rotate(-25deg) scaleY(.46);animation:bootOrbit 4s linear infinite}
+.boot-core::after{inset:-22%;border-color:rgba(255,91,145,.35);transform:rotate(55deg) scaleY(.58);animation-duration:6s}
+.boot-core.n{left:64%;background:radial-gradient(circle at 38% 34%,rgba(255,255,255,.9) 0 1%,rgba(117,246,255,.78) 7%,rgba(50,140,255,.28) 34%,rgba(50,140,255,.07) 61%,transparent 72%);box-shadow:inset 0 0 22px #75f6ff40,0 0 24px #75f6ff40}
+.boot-core.n::before,.boot-core.n::after{border-color:rgba(117,246,255,.7)}
+@keyframes bootOrbit{to{rotate:360deg}}
+#stage.webgl-ready .boot-core,#stage.webgl-ready .boot-bridge{opacity:0}
 #grain{position:absolute;inset:-50%;pointer-events:none;opacity:.13;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");animation:grain .24s steps(2) infinite}
 @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(1%,-1%)}50%{transform:translate(-1%,1%)}75%{transform:translate(1%,1%)}100%{transform:translate(-1%,-1%)}}
 .vignette{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,transparent 38%,rgba(3,5,13,.52) 100%)}
@@ -54,10 +64,10 @@ h1{margin:15px 0 9px;font-size:clamp(29px,5vw,60px);line-height:.98;letter-spaci
 .instruction{background:rgba(10,15,30,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-width:300px}
 .coordinates{background:rgba(10,15,30,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:12px;padding:12px 14px;gap:16px}
 #hint{bottom:8px;z-index:6}
-.core-label{position:absolute;z-index:3;left:0;top:0;transform:translate(-50%,-50%);width:68px;height:68px;display:grid;place-items:center;font-family:"Space Grotesk",Arial,sans-serif;font-weight:700;font-size:42px;line-height:1;color:#fff;text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 24px currentColor;pointer-events:none;user-select:none;will-change:transform;filter:drop-shadow(0 0 10px currentColor)}
-.label-a{color:#ff7399}.label-n{color:#9cffff}
+.core-label{position:absolute;z-index:3;left:36%;top:52%;transform:translate(-50%,-50%);width:68px;height:68px;display:grid;place-items:center;font-family:"Space Grotesk",Arial,sans-serif;font-weight:700;font-size:42px;line-height:1;color:#fff;text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 24px currentColor;pointer-events:none;user-select:none;will-change:transform;filter:drop-shadow(0 0 10px currentColor)}
+.label-a{color:#ff7399}.label-n{color:#9cffff}#stage.webgl-ready .core-label{z-index:3}
 @media(max-width:700px){
- .hud{padding:14px}.topbar{inset:14px 14px auto}.brand-name{font-size:10px}.live{font-size:8px;padding:8px 10px}
+ .boot-core{width:clamp(64px,18vw,92px)}.hud{padding:14px}.topbar{inset:14px 14px auto}.brand-name{font-size:10px}.live{font-size:8px;padding:8px 10px}
  .headline{top:76px;width:94vw}.headline h1{font-size:clamp(21px,6vw,34px);margin:8px 0 5px}.headline .eyebrow{font-size:7px;letter-spacing:.13em}.subtitle{font-size:9px;max-width:270px;margin:auto;line-height:1.4}
  .metrics{top:142px;left:14px;width:clamp(124px,36vw,170px);gap:5px}.metric{padding:7px 9px}.metric-label{font-size:7px;letter-spacing:.1em}.metric-value{font-size:12px}.metric-bar{margin-top:5px}
  .footer{left:14px;right:14px;bottom:24px;gap:8px}.instruction{max-width:min(56vw,220px);padding:9px 10px}.instruction-title{font-size:8px;letter-spacing:.08em}.instruction p{font-size:9px;line-height:1.45}.coordinates{display:grid;gap:7px;padding:9px 10px;max-width:42vw}.coord{font-size:7px}.coord b{font-size:8px;margin-top:4px}.core-label{width:48px;height:48px;font-size:32px}#hint{font-size:7px;letter-spacing:.06em;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
@@ -69,7 +79,7 @@ h1{margin:15px 0 9px;font-size:clamp(29px,5vw,60px);line-height:.98;letter-spaci
 </head>
 <body>
 <div id="stage" aria-label="Interactive 3D quantum entanglement visualization">
-  <div class="crosshair"></div><div id="grain"></div><div class="vignette"></div><div class="core-label label-a" id="labelA" aria-label="Core A">A</div><div class="core-label label-n" id="labelN" aria-label="Core N">N</div>
+  <div class="crosshair"></div><div class="boot-bridge" aria-hidden="true"></div><div class="boot-core a" aria-hidden="true"></div><div class="boot-core n" aria-hidden="true"></div><div id="grain"></div><div class="vignette"></div><div class="core-label label-a" id="labelA" aria-label="Core A">A</div><div class="core-label label-n" id="labelN" aria-label="Core N">N</div>
 </div>
 <div class="hud">
   <header class="topbar">
@@ -172,6 +182,7 @@ function syncCoreLabels(){
     const x=(point.x*.5+.5)*rect.width+rect.left;
     const y=(-point.y*.5+.5)*rect.height+rect.top;
     const visible=point.z>-1&&point.z<1&&x>rect.left-40&&x<rect.right+40&&y>rect.top-40&&y<rect.bottom+40;
+    el.style.left='0px';el.style.top='0px';
     el.style.display=visible?'grid':'none';
     el.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) scale(${1+node.hover*.12})`;
   }
@@ -194,19 +205,6 @@ function animate(){
  state.targetN.set(-state.posA.x+Math.sin(t*.7)*.14,-state.posA.y*.82+Math.cos(t*.62)*.13,-state.posA.z*.7);
  smoothSpring(state.posN,state.velN,state.targetN,5.8,4.3,dt);
  coreA.root.position.copy(state.posA);coreN.root.position.copy(state.posN);
-const labelA=document.querySelector('#labelA'),labelN=document.querySelector('#labelN');
-const labelPointA=new THREE.Vector3(),labelPointN=new THREE.Vector3();
-function syncCoreLabels(){
-  const rect=renderer.domElement.getBoundingClientRect();
-  for(const [node,point,el] of [[coreA,labelPointA,labelA],[coreN,labelPointN,labelN]]){
-    point.copy(node.root.position);point.project(camera);
-    const x=(point.x*.5+.5)*rect.width+rect.left;
-    const y=(-point.y*.5+.5)*rect.height+rect.top;
-    const visible=point.z>-1&&point.z<1&&x>rect.left-40&&x<rect.right+40&&y>rect.top-40&&y<rect.bottom+40;
-    el.style.display=visible?'grid':'none';
-    el.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) scale(${1+node.hover*.12})`;
-  }
-}
  const dist=state.posA.distanceTo(state.posN),strain=Math.min(1,dist/8+state.velA.length()*.035);
  [coreA,coreN].forEach((c,i)=>{c.shell.material.uniforms.time.value=t;c.shell.material.uniforms.hover.value=c.hover;c.root.rotation.y=t*(i?-.21:.27);c.root.rotation.x=Math.sin(t*.43+i)*.12;c.nucleus.scale.setScalar(1+.06*Math.sin(t*2.7+i));c.inner.rotation.set(t*.7,t*.9,t*.5);c.rings.forEach((r,j)=>{r.rotation.x+=dt*(.16+j*.1)*(j%2?-1:1);r.rotation.y+=dt*(.22+j*.08);r.rotation.z+=dt*(j===1?-.24:.12)});c.orbitDust.rotation.y=t*(i?-.3:.38);c.orbitDust.rotation.x=Math.sin(t*.4+i)*.15;c.halo.material.opacity=.035+.018*(.5+.5*Math.sin(t*2+i));c.root.scale.setScalar(1+c.hover*.13)});
  pinkLight.position.copy(state.posA);blueLight.position.copy(state.posN);
@@ -225,10 +223,13 @@ function syncCoreLabels(){
  document.querySelector('#frequency').innerHTML=freq.toFixed(1)+' <small>Hz</small>';document.querySelector('#stability').innerHTML=stability.toFixed(2)+' <small>%</small>';document.querySelector('#tension').innerHTML=ten.toFixed(2)+' <small>τ</small>';
  document.querySelector('#freqBar').style.width=(freq/440*100)+'%';document.querySelector('#stableBar').style.width=stability+'%';document.querySelector('#tensionBar').style.width=Math.min(100,ten/1.8*100)+'%';
  const fmt=v=>`${v.x.toFixed(2)} / ${v.y.toFixed(2)} / ${v.z.toFixed(2)}`;document.querySelector('#coordA').textContent=fmt(state.posA);document.querySelector('#coordN').textContent=fmt(state.posN);
- grainPass.uniforms.time.value=t;controls.update();syncCoreLabels();composer.render();
+ grainPass.uniforms.time.value=t;controls.update();syncCoreLabels();composer.render();if(!stage.classList.contains('webgl-ready'))stage.classList.add('webgl-ready');
 }
 function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.fov=w<700?49:43;camera.position.z=w<700?17:15;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,w<700?1.5:2));renderer.setSize(w,h);composer.setSize(w,h);bloom.setSize(w,h)}
-window.addEventListener('resize',resize);resize();animate();
+window.addEventListener('resize',resize);
+// Keep a lightweight CSS version visible immediately, then precompile GPU programs before revealing WebGL.
+async function boot(){resize();syncCoreLabels();try{if(renderer.compileAsync)await renderer.compileAsync(scene,camera);else renderer.compile(scene,camera)}catch(error){console.warn('Shader prewarm skipped; continuing with runtime compilation.',error)}animate()}
+boot();
 </script>
 </body>
 </html>
