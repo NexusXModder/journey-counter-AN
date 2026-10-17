@@ -1,211 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Neural Entanglement</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        
-        .entanglement-container { position: relative; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; touch-action: none; }
-        
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        
-        .node {
-            position: absolute;
-            width: 55px;
-            height: 55px;
-            background: radial-gradient(circle, #f43f5e 0%, #881337 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 30px #f43f5e, inset 0 0 10px rgba(255, 255, 255, 0.4);
-            cursor: grab;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-weight: 800;
-            font-size: 1.2rem;
-            user-select: none;
-            touch-action: none;
-        }
-
-        .node:active { cursor: grabbing; }
-
-        .node::after {
-            content: '';
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border: 1px dashed rgba(244, 63, 94, 0.5);
-            border-radius: 50%;
-            animation: spin 8s linear infinite;
-        }
-
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .info-panel {
-            position: absolute;
-            bottom: 40px;
-            text-align: center;
-            z-index: 3;
-            pointer-events: none;
-            background: rgba(22, 27, 34, 0.85);
-            border: 1px solid #30363d;
-            padding: 14px 28px;
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .info-panel h2 { font-size: 1rem; color: #fff; font-weight: 700; letter-spacing: 0.5px; }
-        .info-panel p { font-size: 0.75rem; color: #8b949e; margin-top: 4px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070912">
+<meta name="description" content="An interactive 3D quantum entanglement field linking cores A and N.">
+<title>QUANTUM — Entanglement Field</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--cyan:#75f6ff;--blue:#6a8dff;--pink:#ff547f;--ink:#070912;--muted:#8290ac;--line:rgba(153,183,255,.16)}
+*{box-sizing:border-box}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--ink);color:#edf4ff;font-family:"Space Grotesk",sans-serif}body{min-height:100svh}
+#stage{position:fixed;inset:0;isolation:isolate;background:radial-gradient(ellipse at 50% 48%,#111a36 0%,#090d1b 45%,#05060d 100%)}
+#stage canvas{display:block;width:100%;height:100%;outline:0}
+#grain{position:absolute;inset:-50%;pointer-events:none;opacity:.13;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");animation:grain .24s steps(2) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(1%,-1%)}50%{transform:translate(-1%,1%)}75%{transform:translate(1%,1%)}100%{transform:translate(-1%,-1%)}}
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,transparent 38%,rgba(3,5,13,.52) 100%)}
+.hud{position:absolute;inset:0;z-index:4;pointer-events:none;padding:clamp(18px,3.2vw,46px);display:flex;flex-direction:column;justify-content:space-between}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:34px;height:34px;border:1px solid rgba(117,246,255,.45);border-radius:11px;display:grid;place-items:center;color:var(--cyan);font-weight:700;box-shadow:0 0 26px #75f6ff1b,inset 0 0 14px #75f6ff10;font-size:15px}
+.brand-name{font-size:12px;letter-spacing:.22em;font-weight:700}.brand-sub{font:9px "DM Mono",monospace;color:#6f7c99;letter-spacing:.13em;margin-top:4px}
+.live{display:flex;align-items:center;gap:9px;font:10px "DM Mono",monospace;letter-spacing:.16em;color:#b3c3de;border:1px solid var(--line);background:#0a1020a6;padding:10px 13px;border-radius:999px;backdrop-filter:blur(16px)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#70ffc7;box-shadow:0 0 12px #70ffc7;animation:blink 1.8s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}
+.headline{position:absolute;top:clamp(88px,14vh,145px);left:50%;transform:translateX(-50%);text-align:center;width:min(90vw,760px)}
+.eyebrow{font:10px "DM Mono",monospace;letter-spacing:.32em;color:var(--cyan);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:12px}.eyebrow:before,.eyebrow:after{content:"";height:1px;width:28px;background:linear-gradient(90deg,transparent,var(--cyan));opacity:.7}.eyebrow:after{transform:rotate(180deg)}
+h1{margin:15px 0 9px;font-size:clamp(29px,5vw,60px);line-height:.98;letter-spacing:-.055em;font-weight:600;text-shadow:0 0 36px #718dff18}h1 span{background:linear-gradient(100deg,#f7fbff 5%,#a6bcff 48%,#76f6ff 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{font-size:clamp(11px,1.2vw,13px);color:#8491ad;letter-spacing:.035em}
+.metrics{display:flex;gap:8px;align-self:flex-start;flex-wrap:wrap}
+.metric{min-width:125px;padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,#10172bbd,#090d19b8);backdrop-filter:blur(18px);box-shadow:0 12px 40px #0002}
+.metric-label{font:9px "DM Mono",monospace;color:#71809f;letter-spacing:.16em;text-transform:uppercase}.metric-value{margin-top:7px;font:16px "DM Mono",monospace;color:#e8f5ff}.metric-value small{font-size:9px;color:#7f8eaa;margin-left:3px}.metric-bar{height:2px;background:#1d2941;margin-top:10px;overflow:hidden}.metric-bar i{display:block;height:100%;width:82%;background:linear-gradient(90deg,var(--blue),var(--cyan));box-shadow:0 0 10px var(--cyan);transition:width .3s}
+.footer{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.instruction{border:1px solid var(--line);background:#0a1020b8;backdrop-filter:blur(18px);border-radius:14px;padding:14px 17px;max-width:340px}
+.instruction-title{font:10px "DM Mono",monospace;color:#dce8ff;letter-spacing:.13em}.instruction p{font-size:11px;color:#8491ad;line-height:1.6;margin:7px 0 0}
+.keys{display:flex;gap:6px;margin-top:10px}.key{font:9px "DM Mono",monospace;color:#9cacc9;border:1px solid #29334c;padding:4px 7px;border-radius:5px}
+.coordinates{display:flex;gap:20px;flex-wrap:wrap;justify-content:flex-end}
+.coord{font:9px "DM Mono",monospace;color:#73819e;letter-spacing:.07em}.coord b{display:block;color:#d8e6ff;font-weight:400;font-size:11px;margin-top:7px}
+.crosshair{position:absolute;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);border:1px solid #9bb5ff16;border-radius:50%;z-index:1;pointer-events:none}.crosshair:before,.crosshair:after{content:"";position:absolute;background:#9bb5ff20}.crosshair:before{width:58px;height:1px;left:-11px;top:18px}.crosshair:after{height:58px;width:1px;top:-11px;left:18px}
+#hint{position:absolute;z-index:5;bottom:18px;left:50%;transform:translateX(-50%);font:9px "DM Mono",monospace;color:#52617f;letter-spacing:.12em;white-space:nowrap;pointer-events:none}
+@media(max-width:700px){.hud{padding:18px}.brand-sub{display:none}.brand-mark{width:30px;height:30px}.headline{top:15vh;width:94vw}h1{font-size:clamp(30px,8vw,48px)}.subtitle{max-width:290px;margin:auto;line-height:1.5}.metrics{gap:6px}.metric{min-width:calc(50% - 3px);padding:9px 11px;flex:1}.metric-value{font-size:14px}.footer{align-items:flex-end}.instruction{max-width:230px;padding:11px 12px}.instruction p{font-size:10px}.coordinates{gap:10px;max-width:135px}.coord{font-size:8px}.coord b{font-size:9px}.live{font-size:8px;padding:9px}.keys{display:none}#hint{bottom:7px;font-size:8px}}
+@media(max-height:650px) and (min-width:701px){.headline{top:18vh}.hud{padding:20px 30px}.metric{padding:9px 12px}.footer{align-items:flex-end}}
+@media(prefers-reduced-motion:reduce){#grain,.live-dot{animation:none}}
+/* Composition pass: reserve a clean central stage for the cores and bridge. */
+.hud{display:block;padding:clamp(16px,2.4vw,34px)}
+.topbar{position:absolute;inset:clamp(16px,2.4vw,34px) clamp(16px,2.4vw,34px) auto;pointer-events:none}
+.headline{top:clamp(76px,10vh,108px);width:min(90vw,650px);z-index:4;pointer-events:none}
+.headline h1{font-size:clamp(24px,3.6vw,43px);margin:10px 0 7px}
+.headline .eyebrow{font-size:9px;letter-spacing:.22em}
+.subtitle{font-size:11px}
+.metrics{position:absolute;top:clamp(100px,17vh,156px);left:clamp(16px,2.4vw,34px);width:min(220px,24vw);display:grid;grid-template-columns:1fr;gap:7px;z-index:5}
+.metric{min-width:0;padding:10px 12px;background:rgba(10,15,30,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-color:rgba(153,183,255,.2)}
+.metric-label{font-size:8px}.metric-value{font-size:14px;margin-top:5px}.metric-bar{margin-top:7px}
+.footer{position:absolute;left:clamp(16px,2.4vw,34px);right:clamp(16px,2.4vw,34px);bottom:clamp(28px,4vh,42px);align-items:flex-end;pointer-events:none}
+.instruction{background:rgba(10,15,30,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-width:300px}
+.coordinates{background:rgba(10,15,30,.75);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:12px;padding:12px 14px;gap:16px}
+#hint{bottom:8px;z-index:6}
+.core-label{position:absolute;z-index:3;left:0;top:0;transform:translate(-50%,-50%);width:68px;height:68px;display:grid;place-items:center;font-family:"Space Grotesk",Arial,sans-serif;font-weight:700;font-size:42px;line-height:1;color:#fff;text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 24px currentColor;pointer-events:none;user-select:none;will-change:transform;filter:drop-shadow(0 0 10px currentColor)}
+.label-a{color:#ff7399}.label-n{color:#9cffff}
+@media(max-width:700px){
+ .hud{padding:14px}.topbar{inset:14px 14px auto}.brand-name{font-size:10px}.live{font-size:8px;padding:8px 10px}
+ .headline{top:76px;width:94vw}.headline h1{font-size:clamp(21px,6vw,34px);margin:8px 0 5px}.headline .eyebrow{font-size:7px;letter-spacing:.13em}.subtitle{font-size:9px;max-width:270px;margin:auto;line-height:1.4}
+ .metrics{top:142px;left:14px;width:clamp(124px,36vw,170px);gap:5px}.metric{padding:7px 9px}.metric-label{font-size:7px;letter-spacing:.1em}.metric-value{font-size:12px}.metric-bar{margin-top:5px}
+ .footer{left:14px;right:14px;bottom:24px;gap:8px}.instruction{max-width:min(56vw,220px);padding:9px 10px}.instruction-title{font-size:8px;letter-spacing:.08em}.instruction p{font-size:9px;line-height:1.45}.coordinates{display:grid;gap:7px;padding:9px 10px;max-width:42vw}.coord{font-size:7px}.coord b{font-size:8px;margin-top:4px}.core-label{width:48px;height:48px;font-size:32px}#hint{font-size:7px;letter-spacing:.06em;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+}
+@media(max-width:390px){.brand-sub{display:none}.headline{top:72px}.metrics{top:133px}.metric-label{letter-spacing:.04em}.instruction p{max-width:38vw}.coordinates{max-width:40vw}.coord b{font-size:7px}}
+@media(max-height:650px) and (min-width:701px){.headline{top:65px}.headline h1{font-size:30px}.metrics{top:105px}.footer{bottom:24px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
+<div id="stage" aria-label="Interactive 3D quantum entanglement visualization">
+  <div class="crosshair"></div><div id="grain"></div><div class="vignette"></div><div class="core-label label-a" id="labelA" aria-label="Core A">A</div><div class="core-label label-n" id="labelN" aria-label="Core N">N</div>
+</div>
+<div class="hud">
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark">N</div><div><div class="brand-name">NEXUS / QUANTUM</div><div class="brand-sub">SPACETIME RESEARCH DIVISION</div></div></div>
+    <div class="live"><span class="live-dot"></span> FIELD ONLINE <span style="color:#53627f">/ 01</span></div>
+  </header>
+  <section class="headline"><div class="eyebrow">Non-local connection established</div><h1>QUANTUM <span>ENTANGLEMENT</span></h1><div class="subtitle">Two cores. One field. A connection beyond distance.</div></section>
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Entanglement frequency</div><div class="metric-value" id="frequency">384.2 <small>Hz</small></div><div class="metric-bar"><i id="freqBar"></i></div></div>
+    <div class="metric"><div class="metric-label">Energy stability</div><div class="metric-value" id="stability">98.72 <small>%</small></div><div class="metric-bar"><i id="stableBar"></i></div></div>
+    <div class="metric"><div class="metric-label">Bridge tension</div><div class="metric-value" id="tension">0.84 <small>τ</small></div><div class="metric-bar"><i id="tensionBar"></i></div></div>
+  </div>
+  <footer class="footer">
+    <div class="instruction"><div class="instruction-title">QUANTUM ENTANGLEMENT FIELD</div><p>Drag core <b style="color:#ff7898">A</b> through spacetime. Core <b style="color:#8bf8ff">N</b> follows through a damped gravitational link.</p><div class="keys"><span class="key">DRAG A</span><span class="key">MOVE POINTER</span><span class="key">SCROLL · ZOOM</span></div></div>
+    <div class="coordinates"><div class="coord">CORE A <b id="coordA">−1.80 / 0.00 / 0.00</b></div><div class="coord">CORE N <b id="coordN">1.80 / 0.00 / 0.00</b></div></div>
+  </footer>
+</div>
+<div id="hint">INTERACTIVE FIELD SIMULATION · GRAB THE PINK CORE TO BEGIN</div>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
 
-    <div class="entanglement-container" id="canvasContainer">
-        <canvas id="entangleCanvas"></canvas>
-        
-        <!-- Node A -->
-        <div class="node" id="node1">A</div>
-        <!-- Node N (Mirrored/Entangled) -->
-        <div class="node" id="node2">N</div>
+const stage=document.querySelector('#stage');
+const scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(0x070912,.018);
+const camera=new THREE.PerspectiveCamera(43,innerWidth/innerHeight,.1,180);camera.position.set(0,0,15);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,innerWidth<700?1.5:2));renderer.setSize(innerWidth,innerHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;stage.prepend(renderer.domElement);
+const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));
+const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),1.15,.72,.12);composer.addPass(bloom);
+const grainPass=new ShaderPass({uniforms:{tDiffuse:{value:null},time:{value:0},amount:{value:.025}},vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`uniform sampler2D tDiffuse;uniform float time;uniform float amount;varying vec2 vUv;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7))+time*17.)*43758.5453);}void main(){vec4 c=texture2D(tDiffuse,vUv);float n=hash(vUv*vec2(900.,600.))-.5;c.rgb+=n*amount;c.rgb*=.99+.01*sin(vUv.y*650.+time*2.);gl_FragColor=c;}`});composer.addPass(grainPass);
+scene.add(new THREE.AmbientLight(0x5269b0,1.25));
+const keyLight=new THREE.PointLight(0x78edff,36,24);keyLight.position.set(0,2,5);scene.add(keyLight);
+const pinkLight=new THREE.PointLight(0xff326f,24,10);scene.add(pinkLight);
+const blueLight=new THREE.PointLight(0x4c7dff,26,10);scene.add(blueLight);
 
-        <div class="info-panel">
-            <h2>QUANTUM ENTANGLEMENT FIELD</h2>
-            <p>Drag Core "A" • Where one goes, the other follows</p>
-            <p>Absolute connection: Core A linked to N across spacetime</p>
-        </div>
-    </div>
+const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.045;controls.enablePan=false;controls.minDistance=9;controls.maxDistance=23;controls.minPolarAngle=Math.PI*.28;controls.maxPolarAngle=Math.PI*.72;controls.rotateSpeed=.35;controls.zoomSpeed=.65;
 
-    <script>
-        const canvas = document.getElementById('entangleCanvas');
-        const ctx = canvas.getContext('2d');
-        const node1 = document.getElementById('node1');
-        const node2 = document.getElementById('node2');
+const coreVertex=`varying vec3 vN;varying vec3 vP;varying vec3 vW;void main(){vN=normalize(normalMatrix*normal);vP=position;vec4 w=modelMatrix*vec4(position,1.);vW=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`;
+const coreFragment=`uniform vec3 color;uniform float time;uniform float hover;varying vec3 vN;varying vec3 vP;varying vec3 vW;void main(){vec3 n=normalize(vN);vec3 viewDir=normalize(cameraPosition-vW);float fres=pow(1.-max(dot(n,viewDir),0.),2.5);float bands=.5+.5*sin(vP.y*19.+vP.x*13.-time*2.);float pulse=.82+.18*sin(time*3.5);vec3 c=color*(.24+.4*bands)+color*(fres*2.3+hover*.8);c+=vec3(.42,.78,1.)*pow(fres,3.)*1.5;c*=pulse;gl_FragColor=vec4(c, .9);}`;
+function makeCore(letter,colorHex){
+ const root=new THREE.Group();scene.add(root);
+ const color=new THREE.Color(colorHex);
+ const shell=new THREE.Mesh(new THREE.IcosahedronGeometry(.83,5),new THREE.ShaderMaterial({uniforms:{color:{value:color},time:{value:0},hover:{value:0}},vertexShader:coreVertex,fragmentShader:coreFragment,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+ root.add(shell);
+ const nucleus=new THREE.Mesh(new THREE.SphereGeometry(.37,48,32),new THREE.MeshBasicMaterial({color:colorHex,transparent:true,opacity:.18,blending:THREE.AdditiveBlending}));root.add(nucleus);
+ const inner=new THREE.Mesh(new THREE.IcosahedronGeometry(.25,2),new THREE.MeshStandardMaterial({color:0xffffff,emissive:colorHex,emissiveIntensity:4,metalness:.15,roughness:.18}));root.add(inner);
+ const rings=[];
+ for(let i=0;i<3;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(1.04+i*.12,.009+(i===1?.004:0),8,160),new THREE.MeshBasicMaterial({color:colorHex,transparent:true,opacity:.58-i*.12,blending:THREE.AdditiveBlending}));ring.rotation.set(.55+i*.72,.4+i*.7,.2+i*.8);root.add(ring);rings.push(ring)}
+ const halo=new THREE.Mesh(new THREE.SphereGeometry(1.18,32,24),new THREE.MeshBasicMaterial({color:colorHex,transparent:true,opacity:.045,side:THREE.BackSide,blending:THREE.AdditiveBlending}));root.add(halo);
+ const count=330,arr=new Float32Array(count*3),sizes=new Float32Array(count),phase=[];
+ for(let i=0;i<count;i++){const r=.48+Math.random()*.78,a=Math.random()*Math.PI*2,b=Math.acos(2*Math.random()-1);arr[i*3]=r*Math.sin(b)*Math.cos(a);arr[i*3+1]=r*Math.sin(b)*Math.sin(a);arr[i*3+2]=r*Math.cos(b);sizes[i]=Math.random();phase.push(Math.random()*Math.PI*2)}
+ const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(arr,3));geo.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));
+ const pmat=new THREE.PointsMaterial({color:colorHex,size:.025,transparent:true,opacity:.95,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});
+ const orbitDust=new THREE.Points(geo,pmat);root.add(orbitDust);
+ // Crisp extruded letter, oriented toward the viewing camera.
+ return {root,shell,nucleus,inner,rings,halo,orbitDust,phase,color,letter,hover:0};
+}
+const coreA=makeCore('A',0xff4d83),coreN=makeCore('N',0x69f3ff);
+// Use canvas-generated signed-looking glyphs on a shallow 3D plaque: no external font asset required.
+function makeGlyph(letter,color){
+ const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');
+ x.clearRect(0,0,256,256);x.textAlign='center';x.textBaseline='middle';x.font='700 168px Space Grotesk,Arial,sans-serif';
+ x.shadowColor=color;x.shadowBlur=28;x.fillStyle='#ffffff';x.fillText(letter,128,130);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;
+ const mat=new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,side:THREE.DoubleSide});
+ const mesh=new THREE.Mesh(new THREE.PlaneGeometry(.8,.8),mat);mesh.position.z=.49;return mesh;
+}
+coreA.root.add(makeGlyph('A','#ff4d83'));coreN.root.add(makeGlyph('N','#69f3ff'));
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+const dustCount=2400,dustPos=new Float32Array(dustCount*3),dustCol=new Float32Array(dustCount*3);
+for(let i=0;i<dustCount;i++){dustPos[i*3]=(Math.random()-.5)*42;dustPos[i*3+1]=(Math.random()-.5)*26;dustPos[i*3+2]=(Math.random()-.5)*24-4;const c=new THREE.Color().setHSL(.53+Math.random()*.15,.65,.45+Math.random()*.4);dustCol.set(c.toArray(),i*3)}
+const dustGeo=new THREE.BufferGeometry();dustGeo.setAttribute('position',new THREE.BufferAttribute(dustPos,3));dustGeo.setAttribute('color',new THREE.BufferAttribute(dustCol,3));
+const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({size:.025,vertexColors:true,transparent:true,opacity:.62,depthWrite:false,blending:THREE.AdditiveBlending}));scene.add(dust);
 
-        let centerX = window.innerWidth / 2;
-        let centerY = window.innerHeight / 2;
+const bridgeSegments=180,bridgePositions=new Float32Array((bridgeSegments+1)*3),bridgeColors=new Float32Array((bridgeSegments+1)*3);
+const bridgeGeo=new THREE.BufferGeometry();bridgeGeo.setAttribute('position',new THREE.BufferAttribute(bridgePositions,3));bridgeGeo.setAttribute('color',new THREE.BufferAttribute(bridgeColors,3));
+const bridge=new THREE.Line(bridgeGeo,new THREE.LineBasicMaterial({vertexColors:true,transparent:true,opacity:.9,blending:THREE.AdditiveBlending}));scene.add(bridge);
+const beamMat=new THREE.MeshBasicMaterial({color:0x7befff,transparent:true,opacity:.12,blending:THREE.AdditiveBlending,depthWrite:false});
+const beam=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,1,12,1,true),beamMat);scene.add(beam);
+const pulseCount=130,pulsePositions=new Float32Array(pulseCount*3),pulseData=[];
+for(let i=0;i<pulseCount;i++)pulseData.push({t:Math.random(),dir:i%2?1:-1,speed:.12+Math.random()*.34,size:.02+Math.random()*.035});
+const pulseGeo=new THREE.BufferGeometry();pulseGeo.setAttribute('position',new THREE.BufferAttribute(pulsePositions,3));
+const pulseMat=new THREE.PointsMaterial({color:0xb9ffff,size:.045,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true});const pulses=new THREE.Points(pulseGeo,pulseMat);scene.add(pulses);
+const waveGroup=new THREE.Group();scene.add(waveGroup);
+for(let i=0;i<4;i++){const m=new THREE.Mesh(new THREE.TorusGeometry(1.18+i*.17,.006,6,120),new THREE.MeshBasicMaterial({color:i%2?0x8c91ff:0x78f5ff,transparent:true,opacity:.22,blending:THREE.AdditiveBlending}));waveGroup.add(m)}
 
-        let pos1 = { x: centerX - 120, y: centerY };
-        let pos2 = { x: centerX + 120, y: centerY };
+const state={drag:false,pointer:new THREE.Vector2(),mouse:new THREE.Vector2(),targetA:new THREE.Vector3(-2.1,0,0),velA:new THREE.Vector3(),posA:new THREE.Vector3(-2.1,0,0),posN:new THREE.Vector3(2.1,0,0),velN:new THREE.Vector3(),targetN:new THREE.Vector3(2.1,0,0),time:0,hoverA:0,hoverN:0};
+coreA.root.position.copy(state.posA);coreN.root.position.copy(state.posN);
+const labelA=document.querySelector('#labelA'),labelN=document.querySelector('#labelN');
+const labelPointA=new THREE.Vector3(),labelPointN=new THREE.Vector3();
+function syncCoreLabels(){
+  const rect=renderer.domElement.getBoundingClientRect();
+  for(const [node,point,el] of [[coreA,labelPointA,labelA],[coreN,labelPointN,labelN]]){
+    point.copy(node.root.position);point.project(camera);
+    const x=(point.x*.5+.5)*rect.width+rect.left;
+    const y=(-point.y*.5+.5)*rect.height+rect.top;
+    const visible=point.z>-1&&point.z<1&&x>rect.left-40&&x<rect.right+40&&y>rect.top-40&&y<rect.bottom+40;
+    el.style.display=visible?'grid':'none';
+    el.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) scale(${1+node.hover*.12})`;
+  }
+}
+const raycaster=new THREE.Raycaster(),ndc=new THREE.Vector2();let dragPlane=new THREE.Plane(new THREE.Vector3(0,0,1),0),dragOffset=new THREE.Vector3(),intersection=new THREE.Vector3();
+function projectPointer(e){const r=renderer.domElement.getBoundingClientRect();ndc.x=((e.clientX-r.left)/r.width)*2-1;ndc.y=-((e.clientY-r.top)/r.height)*2+1;state.mouse.set(ndc.x,ndc.y)}
+function pointerDown(e){projectPointer(e);raycaster.setFromCamera(ndc,camera);const hits=raycaster.intersectObject(coreA.root,true);if(hits.length){state.drag=true;controls.enabled=false;renderer.domElement.setPointerCapture?.(e.pointerId);dragPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()),state.posA);if(raycaster.ray.intersectPlane(dragPlane,intersection))dragOffset.copy(state.posA).sub(intersection);stage.classList.add('dragging');document.querySelector('#hint').textContent='ENTANGLEMENT ACTIVE · CORE A IS MOVING THROUGH SPACETIME';e.preventDefault()}}
+function pointerMove(e){projectPointer(e);if(!state.drag)return;raycaster.setFromCamera(ndc,camera);if(raycaster.ray.intersectPlane(dragPlane,intersection)){state.targetA.copy(intersection).add(dragOffset);state.targetA.x=THREE.MathUtils.clamp(state.targetA.x,-6.5,6.5);state.targetA.y=THREE.MathUtils.clamp(state.targetA.y,-3.5,3.5);state.targetA.z=THREE.MathUtils.clamp(state.targetA.z,-2,2)}}
+function pointerUp(){if(state.drag){state.drag=false;controls.enabled=true;document.querySelector('#hint').textContent='FIELD STABILIZING · GRAB THE PINK CORE TO BEGIN'}}
+renderer.domElement.addEventListener('pointerdown',pointerDown);window.addEventListener('pointermove',pointerMove);window.addEventListener('pointerup',pointerUp);window.addEventListener('pointercancel',pointerUp);
 
-        let targetPos1 = { x: centerX - 120, y: centerY };
-        let targetPos2 = { x: centerX + 120, y: centerY };
-
-        let isDragging = false;
-
-        function updateDOM() {
-            node1.style.transform = `translate(${pos1.x - centerX}px, ${pos1.y - centerY}px)`;
-            node2.style.transform = `translate(${pos2.x - centerX}px, ${pos2.y - centerY}px)`;
-        }
-
-        let particles = [];
-        for(let i = 0; i < 15; i++) {
-            particles.push({ progress: Math.random(), speed: 0.01 + Math.random() * 0.02 });
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            centerX = window.innerWidth / 2;
-            centerY = window.innerHeight / 2;
-
-            if (isDragging) {
-                pos1.x += (targetPos1.x - pos1.x) * 0.3;
-                pos1.y += (targetPos1.y - pos1.y) * 0.3;
-            } else {
-                let time = Date.now() * 0.002;
-                targetPos1.x = (centerX - 120) + Math.sin(time) * 25;
-                targetPos1.y = centerY + Math.cos(time * 0.8) * 20;
-
-                pos1.x += (targetPos1.x - pos1.x) * 0.1;
-                pos1.y += (targetPos1.y - pos1.y) * 0.1;
-            }
-
-            // Symmetric Inverse Mirror Physics
-            targetPos2.x = centerX + (centerX - pos1.x);
-            targetPos2.y = centerY + (centerY - pos1.y);
-
-            pos2.x += (targetPos2.x - pos2.x) * 0.3;
-            pos2.y += (targetPos2.y - pos2.y) * 0.3;
-
-            updateDOM();
-
-            let center1X = pos1.x + 27.5;
-            let center1Y = pos1.y + 27.5;
-            let center2X = pos2.x + 27.5;
-            let center2Y = pos2.y + 27.5;
-
-            // Draw Energy Bridge
-            ctx.beginPath();
-            ctx.moveTo(center1X, center1Y);
-            ctx.lineTo(center2X, center2Y);
-            
-            let dist = Math.hypot(center2X - center1X, center2Y - center1Y);
-            let alpha = Math.min(1, Math.max(0.3, 400 / dist));
-            
-            ctx.strokeStyle = `rgba(244, 63, 94, ${alpha})`;
-            ctx.lineWidth = 3;
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#f43f5e';
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-
-            // Flowing Particles
-            particles.forEach(p => {
-                p.progress += p.speed;
-                if(p.progress > 1) p.progress = 0;
-
-                let px = center1X + (center2X - center1X) * p.progress;
-                let py = center1Y + (center2Y - center1Y) * p.progress;
-
-                ctx.beginPath();
-                ctx.arc(px, py, 3, 0, Math.PI * 2);
-                ctx.fillStyle = '#5ccfe6';
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#5ccfe6';
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            });
-
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // Safe Drag Handlers with Screen Bounds
-        function onMove(clientX, clientY) {
-            if (!isDragging) return;
-            
-            let newX = clientX - 27.5;
-            let newY = clientY - 27.5;
-
-            // Keep within safe window boundaries
-            const padding = 40;
-            targetPos1.x = Math.max(padding, Math.min(window.innerWidth - padding - 55, newX));
-            targetPos1.y = Math.max(padding, Math.min(window.innerHeight - padding - 55, newY));
-        }
-
-        node1.addEventListener('mousedown', (e) => { isDragging = true; e.preventDefault(); });
-        window.addEventListener('mouseup', () => isDragging = false);
-        window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
-
-        node1.addEventListener('touchstart', (e) => { isDragging = true; e.preventDefault(); });
-        window.addEventListener('touchend', () => isDragging = false);
-        window.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) {
-                onMove(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        });
-    </script>
+const clock=new THREE.Clock();const tmpA=new THREE.Vector3(),tmpB=new THREE.Vector3(),direction=new THREE.Vector3();
+function smoothSpring(pos,vel,target,k,damp,dt){const acc=target.clone().sub(pos).multiplyScalar(k).addScaledVector(vel,-damp);vel.addScaledVector(acc,dt);pos.addScaledVector(vel,dt)}
+function bridgePoint(t,time){const a=state.posA,b=state.posN;const p=a.clone().lerp(b,t);const d=b.clone().sub(a);const normal=new THREE.Vector3(-d.y,d.x,0).normalize();const envelope=Math.sin(Math.PI*t);const sag=-.23*Math.sin(time*1.4+t*7)*envelope;const wave=.18*Math.sin(t*17-time*4)*envelope;return p.addScaledVector(normal,(sag+wave)*(1+Math.min(1,d.length()/7))).add(new THREE.Vector3(0,-.12*Math.sin(Math.PI*t),0))}
+function animate(){
+ requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);state.time+=dt;const t=state.time;
+ if(!state.drag){state.targetA.x=-2.1+Math.sin(t*.31)*.38;state.targetA.y=Math.sin(t*.53)*.34;state.targetA.z=Math.sin(t*.27)*.24}
+ smoothSpring(state.posA,state.velA,state.targetA, state.drag?42:8, state.drag?11:5,dt);
+ // N follows A with spring delay and a subtle counter-orbit, creating a living tether.
+ state.targetN.set(-state.posA.x+Math.sin(t*.7)*.14,-state.posA.y*.82+Math.cos(t*.62)*.13,-state.posA.z*.7);
+ smoothSpring(state.posN,state.velN,state.targetN,5.8,4.3,dt);
+ coreA.root.position.copy(state.posA);coreN.root.position.copy(state.posN);
+const labelA=document.querySelector('#labelA'),labelN=document.querySelector('#labelN');
+const labelPointA=new THREE.Vector3(),labelPointN=new THREE.Vector3();
+function syncCoreLabels(){
+  const rect=renderer.domElement.getBoundingClientRect();
+  for(const [node,point,el] of [[coreA,labelPointA,labelA],[coreN,labelPointN,labelN]]){
+    point.copy(node.root.position);point.project(camera);
+    const x=(point.x*.5+.5)*rect.width+rect.left;
+    const y=(-point.y*.5+.5)*rect.height+rect.top;
+    const visible=point.z>-1&&point.z<1&&x>rect.left-40&&x<rect.right+40&&y>rect.top-40&&y<rect.bottom+40;
+    el.style.display=visible?'grid':'none';
+    el.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) scale(${1+node.hover*.12})`;
+  }
+}
+ const dist=state.posA.distanceTo(state.posN),strain=Math.min(1,dist/8+state.velA.length()*.035);
+ [coreA,coreN].forEach((c,i)=>{c.shell.material.uniforms.time.value=t;c.shell.material.uniforms.hover.value=c.hover;c.root.rotation.y=t*(i?-.21:.27);c.root.rotation.x=Math.sin(t*.43+i)*.12;c.nucleus.scale.setScalar(1+.06*Math.sin(t*2.7+i));c.inner.rotation.set(t*.7,t*.9,t*.5);c.rings.forEach((r,j)=>{r.rotation.x+=dt*(.16+j*.1)*(j%2?-1:1);r.rotation.y+=dt*(.22+j*.08);r.rotation.z+=dt*(j===1?-.24:.12)});c.orbitDust.rotation.y=t*(i?-.3:.38);c.orbitDust.rotation.x=Math.sin(t*.4+i)*.15;c.halo.material.opacity=.035+.018*(.5+.5*Math.sin(t*2+i));c.root.scale.setScalar(1+c.hover*.13)});
+ pinkLight.position.copy(state.posA);blueLight.position.copy(state.posN);
+ // Elastic, vibrating volumetric bridge: curved centerline plus layered parallel strands.
+ for(let i=0;i<=bridgeSegments;i++){const u=i/bridgeSegments,p=bridgePoint(u,t);bridgePositions[i*3]=p.x;bridgePositions[i*3+1]=p.y;bridgePositions[i*3+2]=p.z;const c=new THREE.Color().lerpColors(new THREE.Color(0xff4e86),new THREE.Color(0x68f5ff),u);const shimmer=.55+.45*Math.sin(u*42-t*9);c.multiplyScalar(shimmer);bridgeColors.set(c.toArray(),i*3)}
+ bridgeGeo.attributes.position.needsUpdate=true;bridgeGeo.attributes.color.needsUpdate=true;bridgeGeo.computeBoundingSphere();
+ tmpA.copy(state.posA);tmpB.copy(state.posN);direction.copy(tmpB).sub(tmpA);beam.position.copy(tmpA).add(tmpB).multiplyScalar(.5);beam.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.clone().normalize());beam.scale.set(1,direction.length(),1);beam.material.opacity=.055+.04*(.5+.5*Math.sin(t*5));
+ for(let i=0;i<pulseCount;i++){const q=pulseData[i];q.t+=dt*q.speed*q.dir;if(q.t>1)q.t=0;if(q.t<0)q.t=1;const p=bridgePoint(q.t,t);pulsePositions[i*3]=p.x;pulsePositions[i*3+1]=p.y;pulsePositions[i*3+2]=p.z;pulseData[i].size=.02+.025*(.5+.5*Math.sin(t*8+i))}
+ pulseGeo.attributes.position.needsUpdate=true;
+ waveGroup.position.copy(state.posA);waveGroup.rotation.set(t*.18,t*.22,t*.28);waveGroup.children.forEach((m,i)=>{const sc=1+((t*.48+i*.24)%1)*.7;m.scale.setScalar(sc);m.material.opacity=.22*(1-((t*.48+i*.24)%1))});
+ // Mouse proximity drives reactive ambient dust and hover energy.
+ raycaster.setFromCamera(ndc,camera);const hitA=raycaster.intersectObject(coreA.root,true).length>0,hitN=raycaster.intersectObject(coreN.root,true).length>0;
+ state.hoverA=THREE.MathUtils.damp(state.hoverA,hitA||state.drag?1:0,8,dt);state.hoverN=THREE.MathUtils.damp(state.hoverN,hitN?1:0,8,dt);coreA.hover=state.hoverA;coreN.hover=state.hoverN;renderer.domElement.style.cursor=state.drag?'grabbing':hitA?'grab':hitN?'pointer':'default';
+ const pos=dustGeo.attributes.position;for(let i=0;i<dustCount;i++){const ix=i*3;pos.array[ix]+=(state.mouse.x*.0007);pos.array[ix+1]+=(state.mouse.y*.0007);if(pos.array[ix]>22)pos.array[ix]=-22;if(pos.array[ix]<-22)pos.array[ix]=22;if(pos.array[ix+1]>14)pos.array[ix+1]=-14;if(pos.array[ix+1]<-14)pos.array[ix+1]=14}pos.needsUpdate=true;dust.rotation.y=Math.sin(t*.035)*.04;dust.rotation.x=Math.cos(t*.027)*.025;
+ const freq=380+Math.sin(t*1.3)*16+strain*22,stability=THREE.MathUtils.clamp(99.2-strain*7-state.velA.length()*.15,88,99.9),ten=THREE.MathUtils.clamp(dist/5+state.velA.length()*.05,.1,1.8);
+ document.querySelector('#frequency').innerHTML=freq.toFixed(1)+' <small>Hz</small>';document.querySelector('#stability').innerHTML=stability.toFixed(2)+' <small>%</small>';document.querySelector('#tension').innerHTML=ten.toFixed(2)+' <small>τ</small>';
+ document.querySelector('#freqBar').style.width=(freq/440*100)+'%';document.querySelector('#stableBar').style.width=stability+'%';document.querySelector('#tensionBar').style.width=Math.min(100,ten/1.8*100)+'%';
+ const fmt=v=>`${v.x.toFixed(2)} / ${v.y.toFixed(2)} / ${v.z.toFixed(2)}`;document.querySelector('#coordA').textContent=fmt(state.posA);document.querySelector('#coordN').textContent=fmt(state.posN);
+ grainPass.uniforms.time.value=t;controls.update();syncCoreLabels();composer.render();
+}
+function resize(){const w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.fov=w<700?49:43;camera.position.z=w<700?17:15;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,w<700?1.5:2));renderer.setSize(w,h);composer.setSize(w,h);bloom.setSize(w,h)}
+window.addEventListener('resize',resize);resize();animate();
+</script>
 </body>
 </html>
