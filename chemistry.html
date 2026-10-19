@@ -1,209 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chemistry of Love Lab - Le Chatelier's Equilibrium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-user-select: none; user-select: none; }
-        body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 25px 20px 120px 20px; overflow-x: hidden; }
-        
-        .chem-container { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 24px; }
-
-        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 1.25rem; padding: 24px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; position: relative; overflow: hidden; }
-        .lab-card h3 { font-size: 0.95rem; color: #f43f5e; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 14px; }
-        .section-desc { font-size: 0.75rem; color: #8b949e; margin-top: 12px; line-height: 1.4; }
-
-        /* 1. Love Potion Mixer */
-        .ingredient-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
-        .chip { background: #0d1117; border: 1px solid #30363d; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; color: #5ccfe6; cursor: pointer; transition: 0.2s; }
-        .chip.selected { background: #f43f5e; color: #fff; border-color: #f43f5e; box-shadow: 0 0 10px rgba(244,63,94,0.4); }
-        .beaker-box { width: 70px; height: 90px; border: 3px solid #30363d; border-top: none; border-radius: 0 0 15px 15px; margin: 0 auto 15px auto; position: relative; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
-        .potion-liquid { width: 100%; height: 0%; background: linear-gradient(180deg, #f43f5e, #881337); transition: height 0.5s ease; position: relative; }
-        .action-btn { background: linear-gradient(135deg, #f43f5e, #be123c); color: #fff; border: none; padding: 8px 18px; border-radius: 0.75rem; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(244,63,94,0.3); }
-        .action-btn:active { transform: scale(0.95); }
-        .potion-output { margin-top: 10px; font-size: 0.8rem; color: #5ccfe6; min-height: 20px; font-weight: 500; }
-
-        /* 2. Interactive Bohr Orbit */
-        .bohr-container { width: 150px; height: 150px; margin: 10px auto; position: relative; display: flex; align-items: center; justify-content: center; }
-        .nucleus { width: 45px; height: 45px; background: radial-gradient(circle, #f43f5e 0%, #881337 100%); border-radius: 50%; color: #fff; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px #f43f5e; z-index: 2; }
-        .orbit { position: absolute; border: 1px dashed #30363d; border-radius: 50%; animation: spinOrbit 6s linear infinite; }
-        .orbit-1 { width: 110px; height: 110px; }
-        .orbit-2 { width: 150px; height: 150px; animation-direction: reverse; animation-duration: 9s; }
-        .electron { position: absolute; width: 10px; height: 10px; background: #5ccfe6; border-radius: 50%; box-shadow: 0 0 8px #5ccfe6; top: -5px; left: 50%; transform: translateX(-50%); }
-        @keyframes spinOrbit { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .speed-slider { width: 80%; margin: 10px auto 0 auto; accent-color: #f43f5e; display: block; cursor: pointer; }
-
-        /* 3. HSC Le Chatelier's Equilibrium Chamber */
-        .chamber-box { width: 100%; height: 80px; background: rgba(255,255,255,0.02); border: 2px dashed #30363d; border-radius: 12px; margin: 12px auto; display: flex; align-items: center; justify-content: space-around; padding: 0 15px; position: relative; }
-        .chamber-atom { width: 38px; height: 38px; background: #1f2937; border: 2px solid #5ccfe6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; color: #5ccfe6; transition: 0.4s; }
-        .equilibrium-arrow { font-size: 1.2rem; color: #f43f5e; font-weight: 800; animation: pulseArrow 1.5s infinite; }
-        @keyframes pulseArrow { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
-        .product-badge { background: rgba(244,63,94,0.15); border: 1px solid #f43f5e; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        
-        /* Custom Shimmering/Gleaming Heart Styles */
-        .shimmer-heart { width: 26px; height: 26px; animation: shimmerPulse 1.5s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(244,63,94,0.8)); }
-        @keyframes shimmerPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(244,63,94,0.6)); }
-            50% { transform: scale(1.15); filter: drop-shadow(0 0 12px rgba(244,63,94,1)); }
-        }
-        .sparkle-star { animation: starRotate 3s linear infinite; transform-origin: center; }
-        @keyframes starRotate {
-            0% { transform: rotate(0deg) scale(0.8); opacity: 0.7; }
-            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
-            100% { transform: rotate(360deg) scale(0.8); opacity: 0.7; }
-        }
-
-        .equilibrium-output { margin-top: 10px; font-size: 0.8rem; color: #5ccfe6; font-weight: 600; min-height: 20px; }
-
-        /* Classical Style Bottom Info Panel */
-        .info-panel {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 520px;
-            text-align: center;
-            z-index: 10;
-            background: rgba(22, 27, 34, 0.9);
-            border: 1px solid #30363d;
-            padding: 12px 20px;
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-        }
-        .info-panel h2 { font-size: 0.95rem; color: #fff; font-weight: 700; letter-spacing: 0.5px; }
-        .info-panel p { font-size: 0.7rem; color: #8b949e; margin-top: 3px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080a13">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Chemistry Chamber 2.0 | Ariyan × Nabila</title>
+<style>
+:root{color-scheme:dark;--bg:#080a13;--panel:rgba(18,22,39,.88);--panel2:rgba(11,15,29,.92);--line:rgba(157,179,255,.16);--text:#f1f4ff;--muted:#8e9ab9;--accent:#ff5d9e;--accent2:#59e8f5;--accent3:#a68bff;--good:#73f2c1;--gold:#ffd88c;--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% 0%,rgba(94,63,178,.19),transparent 40%),radial-gradient(ellipse at 90% 20%,rgba(22,160,187,.1),transparent 34%),var(--bg);color:var(--text);font-family:Outfit,Inter,ui-sans-serif,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent2);outline-offset:3px}
+body[data-theme="cyan"]{--accent:#58e6f4;--accent2:#a1f8d8;--accent3:#619cff}body[data-theme="violet"]{--accent:#b18aff;--accent2:#62dcff;--accent3:#ff7fcb}body[data-theme="minimal"]{--accent:#e8edf8;--accent2:#a5b7d7;--accent3:#b8c0d8}
+.app{width:min(1440px,100%);margin:auto;padding:18px 20px 60px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:5px 0 20px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;min-width:0}.brandmark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:.82rem;font-weight:900;letter-spacing:-.08em;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 28%,transparent),color-mix(in srgb,var(--accent3) 20%,transparent));border:1px solid color-mix(in srgb,var(--accent) 48%,transparent);box-shadow:0 0 25px color-mix(in srgb,var(--accent) 12%,transparent)}.brand-title{font-weight:850;font-size:.91rem;letter-spacing:.08em;text-transform:uppercase}.brand-sub{font-size:.65rem;color:var(--muted);margin-top:3px}.status{display:flex;align-items:center;gap:8px;font:500 .65rem 'JetBrains Mono',ui-monospace,monospace;color:var(--good);border:1px solid rgba(115,242,193,.2);background:rgba(115,242,193,.05);padding:8px 11px;border-radius:100px;white-space:nowrap}.status i{width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 10px var(--good)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,.9fr);gap:24px;align-items:center;padding:26px 0 22px}.eyebrow{font:600 .67rem 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent2)}h1{font-size:clamp(2.2rem,5vw,4.6rem);line-height:.98;letter-spacing:-.075em;margin:13px 0 15px;font-weight:900}.gradient{background:linear-gradient(105deg,#fff 0%,color-mix(in srgb,var(--accent2) 70%,white) 32%,var(--accent3) 68%,var(--accent) 100%);color:transparent;background-clip:text;-webkit-background-clip:text}.hero p{max-width:650px;color:#a4aecb;font-size:.88rem;line-height:1.75;margin:0}.hero-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:17px}.tag{font:500 .62rem 'JetBrains Mono',ui-monospace,monospace;color:#b9c5e6;border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:rgba(255,255,255,.025)}
+.viewport{height:370px;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;background:radial-gradient(ellipse at 50% 45%,rgba(79,85,170,.18),transparent 60%),linear-gradient(150deg,rgba(21,27,48,.9),rgba(7,10,20,.96));box-shadow:inset 0 0 60px rgba(76,95,185,.07),0 25px 70px rgba(0,0,0,.25);isolation:isolate}.viewport canvas{display:block;width:100%;height:100%;touch-action:none}.viewport:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(5,7,15,.18),transparent 25%,transparent 70%,rgba(5,7,15,.48));z-index:1}.view-label{position:absolute;z-index:2;left:15px;top:14px;font:600 .61rem 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.1em;color:#c3cdef}.view-label small{display:block;color:var(--muted);font-size:.56rem;margin-top:5px;letter-spacing:.03em}.view-badge{position:absolute;z-index:2;right:13px;top:13px;border:1px solid var(--line);border-radius:8px;background:rgba(5,8,18,.65);padding:7px 9px;font:500 .59rem 'JetBrains Mono',ui-monospace,monospace;color:var(--accent2)}.view-controls{position:absolute;z-index:3;right:12px;bottom:12px;display:flex;gap:6px}.icon-btn{border:1px solid var(--line);background:rgba(6,9,19,.76);color:#dfe7ff;border-radius:9px;padding:8px 10px;font-size:.68rem;backdrop-filter:blur(8px)}.icon-btn:hover{border-color:var(--accent2)}
+.section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:17px 0 13px}.section-title h2{font-size:1.05rem;margin:0;letter-spacing:-.035em}.section-title p{font-size:.71rem;color:var(--muted);margin:5px 0 0}.section-code{font:500 .62rem 'JetBrains Mono',ui-monospace,monospace;color:#7381a7;letter-spacing:.12em}
+.workspace{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(290px,.85fr);gap:15px;align-items:start}.panel{min-width:0;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(145deg,var(--panel),var(--panel2));padding:19px;box-shadow:0 15px 45px rgba(0,0,0,.18);position:relative;overflow:hidden}.panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 0 0,color-mix(in srgb,var(--accent3) 7%,transparent),transparent 55%)}.panel>*{position:relative}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.kicker{font:600 .6rem 'JetBrains Mono',ui-monospace,monospace;color:#7785aa;letter-spacing:.13em}.panel h3{font-size:.98rem;margin:7px 0 0;letter-spacing:-.03em}.panel-desc{font-size:.73rem;line-height:1.65;color:var(--muted);margin:9px 0 16px}.pill{font:600 .58rem 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.06em;border-radius:7px;padding:7px 8px;background:color-mix(in srgb,var(--accent) 9%,transparent);border:1px solid color-mix(in srgb,var(--accent) 23%,transparent);color:var(--accent);white-space:nowrap}
+.ingredients{display:flex;gap:7px;flex-wrap:wrap}.chip{border:1px solid rgba(150,172,229,.2);border-radius:9px;background:rgba(4,7,17,.4);color:#b7c3e3;padding:8px 10px;font-size:.7rem;transition:transform .18s,border-color .18s,background .18s}.chip:hover{transform:translateY(-1px);border-color:var(--accent2)}.chip.selected{border-color:color-mix(in srgb,var(--accent) 70%,transparent);color:#fff;background:color-mix(in srgb,var(--accent) 18%,transparent);box-shadow:inset 0 0 12px color-mix(in srgb,var(--accent) 8%,transparent)}
+.mixer-grid{display:grid;grid-template-columns:130px minmax(0,1fr);gap:13px;align-items:center;margin:17px 0}.beaker-stage{height:140px;display:grid;place-items:center;perspective:500px}.beaker{width:74px;height:103px;position:relative;transform:rotateY(-9deg) rotateX(5deg);filter:drop-shadow(0 12px 16px color-mix(in srgb,var(--accent) 12%,transparent))}.beaker-neck{position:absolute;top:0;left:22px;width:31px;height:17px;border:2px solid rgba(201,221,255,.65);border-bottom:0;border-radius:4px 4px 0 0;background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.13),rgba(255,255,255,.02));z-index:2}.beaker-glass{position:absolute;inset:14px 0 0;border:2px solid rgba(201,221,255,.68);border-top:0;border-radius:2px 2px 17px 17px;overflow:hidden;background:linear-gradient(100deg,rgba(255,255,255,.12),rgba(255,255,255,.015) 40%,rgba(255,255,255,.08));box-shadow:inset 7px 0 10px rgba(255,255,255,.04)}.beaker-glass:before{content:"";position:absolute;z-index:2;top:5px;bottom:5px;left:7px;width:3px;border-radius:50%;background:rgba(255,255,255,.28)}.liquid{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 85%,transparent),color-mix(in srgb,var(--accent3) 85%,transparent),color-mix(in srgb,var(--accent2) 70%,transparent));transition:height .55s cubic-bezier(.2,.8,.2,1);overflow:hidden}.liquid:before{content:"";position:absolute;left:-15%;top:-6px;width:130%;height:12px;border-radius:50%;background:rgba(255,255,255,.45);filter:blur(3px);animation:wave 2.8s ease-in-out infinite alternate}.liquid:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(120deg,transparent 0 14px,rgba(255,255,255,.09) 15px 17px,transparent 18px 29px);animation:shine 4s linear infinite}.bubble{position:absolute;bottom:-8px;width:5px;height:5px;border:1px solid rgba(255,255,255,.8);border-radius:50%;animation:rise 2.7s linear infinite;opacity:0}.liquid.active .bubble{opacity:.65}@keyframes wave{to{transform:translateX(9px) scaleY(.75)}}@keyframes shine{to{transform:translateX(18px)}}@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}25%{opacity:.6}100%{transform:translateY(-75px) scale(1.1);opacity:0}}
+.stats{display:grid;gap:8px}.stat{display:flex;justify-content:space-between;gap:9px;border-bottom:1px solid rgba(160,183,255,.09);padding-bottom:7px;color:var(--muted);font:500 .61rem 'JetBrains Mono',ui-monospace,monospace}.stat strong{color:#e5ebff;font-weight:500;text-align:right}.meter{height:4px;background:rgba(150,172,229,.12);border-radius:9px;overflow:hidden}.meter span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3),var(--accent2));transition:width .4s}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px}.btn{border:1px solid var(--line);background:rgba(255,255,255,.04);color:#edf2ff;border-radius:10px;padding:10px 12px;font-size:.7rem;font-weight:750;transition:transform .18s,border-color .18s}.btn:hover{transform:translateY(-1px);border-color:var(--accent2)}.btn.primary{background:linear-gradient(110deg,color-mix(in srgb,var(--accent) 85%,#a83c77),color-mix(in srgb,var(--accent3) 85%,#5653d0));border-color:transparent;box-shadow:0 7px 22px color-mix(in srgb,var(--accent) 12%,transparent)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.result{margin-top:12px;padding:13px;border:1px solid color-mix(in srgb,var(--accent2) 15%,transparent);border-radius:12px;background:linear-gradient(100deg,color-mix(in srgb,var(--accent2) 5%,transparent),color-mix(in srgb,var(--accent3) 5%,transparent));min-height:76px;font-size:.74rem;line-height:1.6;color:#bdc8e5}.result-label{font:600 .57rem 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.15em;color:#8391b5;text-transform:uppercase;display:block;margin-bottom:5px}.compound-name{font-size:.9rem;color:#fff;font-weight:850;letter-spacing:-.025em}.formula{font:600 .69rem 'JetBrains Mono',ui-monospace,monospace;color:var(--accent2);display:inline-block;margin-top:4px}.fine{font-size:.64rem;line-height:1.65;color:#7e8aaa;margin-top:10px}
+.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.control{padding:11px;border:1px solid rgba(150,172,229,.12);border-radius:11px;background:rgba(4,7,17,.25)}.control label{display:flex;justify-content:space-between;gap:8px;color:#a9b5d3;font-size:.66rem;margin-bottom:9px}.control output{font:600 .63rem 'JetBrains Mono',ui-monospace,monospace;color:var(--accent2)}input[type=range]{width:100%;accent-color:var(--accent);cursor:pointer}.control select{width:100%;background:#10162a;border:1px solid var(--line);border-radius:8px;color:#e7edff;padding:8px;font-size:.68rem}
+.molecule-stage{height:210px;border-radius:14px;border:1px solid rgba(150,172,229,.12);background:radial-gradient(ellipse,rgba(100,104,190,.1),transparent 70%);position:relative;overflow:hidden}.molecule-stage canvas{width:100%;height:100%;display:block;touch-action:none}.stage-label{position:absolute;top:10px;left:11px;font:600 .58rem 'JetBrains Mono',ui-monospace,monospace;color:#8594b8;pointer-events:none}.hud{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:10px}.hudbox{padding:9px 8px;border-radius:9px;border:1px solid rgba(150,172,229,.12);background:rgba(4,7,17,.24);min-width:0}.hudbox span{display:block;font:500 .53rem 'JetBrains Mono',ui-monospace,monospace;color:#7786a8;letter-spacing:.07em}.hudbox strong{display:block;font:600 .72rem 'JetBrains Mono',ui-monospace,monospace;color:#eaf0ff;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sim-track{height:8px;border-radius:10px;background:rgba(150,172,229,.13);overflow:hidden;margin:12px 0 8px}.sim-track span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent3),var(--accent));transition:width .15s linear}.sim-readout{display:flex;justify-content:space-between;gap:8px;font:500 .62rem 'JetBrains Mono',ui-monospace,monospace;color:#8290b0}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}.discovery-list{display:grid;gap:7px;margin-top:12px;max-height:260px;overflow:auto}.discovery-item{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:10px;border:1px solid rgba(150,172,229,.12);border-radius:10px;background:rgba(4,7,17,.22)}.discovery-item strong{display:block;font-size:.69rem}.discovery-item small{display:block;font:500 .57rem 'JetBrains Mono',ui-monospace,monospace;color:#8391b2;margin-top:4px}.empty{padding:15px;border:1px dashed rgba(150,172,229,.2);border-radius:10px;color:#8391b2;font-size:.7rem;line-height:1.6}
+.mode-note{padding:12px;border-radius:11px;background:rgba(115,242,193,.045);border:1px solid rgba(115,242,193,.15);color:#a8c9c0;font-size:.7rem;line-height:1.7}.mode-note strong{color:#b9ffe6}.theme-row{display:flex;flex-wrap:wrap;gap:7px}.theme-btn{border:1px solid var(--line);border-radius:9px;padding:9px 10px;color:#b8c3e2;background:rgba(255,255,255,.025);font-size:.65rem}.theme-btn[aria-pressed=true]{border-color:var(--accent);color:#fff;background:color-mix(in srgb,var(--accent) 12%,transparent)}.footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;padding:13px 2px;color:#7481a0;font:500 .59rem 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.06em}.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,15px);opacity:0;pointer-events:none;z-index:30;background:#161d32;border:1px solid var(--line);border-radius:11px;padding:11px 15px;color:#f3f6ff;font-size:.72rem;box-shadow:0 15px 45px #0008;transition:opacity .2s,transform .2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.app{padding:13px 13px 48px}.hero{grid-template-columns:1fr;gap:15px}.hero-copy{max-width:720px}.viewport{height:330px}.workspace{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr}.panel{padding:16px}}
+@media(max-width:480px){.topbar{align-items:flex-start}.brand-title{font-size:.75rem}.status{font-size:.56rem;padding:7px 8px}.hero{padding-top:21px}.viewport{height:290px}.mixer-grid{grid-template-columns:100px minmax(0,1fr);gap:8px}.panel{padding:14px}.hud{grid-template-columns:repeat(2,minmax(0,1fr))}.control-grid{grid-template-columns:1fr 1fr}.section-code{font-size:.54rem}.footer{align-items:flex-start;flex-direction:column}.footer span{line-height:1.5}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+/* ===== v3 redesign ===== */
+body{counter-reset:mod}
+#bgCanvas{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;display:block;pointer-events:none}
+.bg-vignette{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,transparent 35%,rgba(5,7,15,.55) 100%)}
+.app{position:relative;z-index:1}
+h1,h2,h3,.brand-title{font-family:Syne,Outfit,sans-serif}
+.hero p{font-size:1.02rem;font-weight:300;line-height:1.8}
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:50}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent3),var(--accent2));box-shadow:0 0 12px var(--accent)}
+.chapter-pill{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:49;font:600 .62rem 'JetBrains Mono',monospace;letter-spacing:.14em;color:#e8eeff;padding:8px 14px;border-radius:100px;border:1px solid var(--line);background:rgba(8,10,19,.62);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);white-space:nowrap}
+.section-title{display:block;position:relative;margin:100px 0 36px;padding:0 0 22px;border-bottom:1px solid var(--line)}
+.section-title:before{content:attr(data-num);display:block;font:800 clamp(4.5rem,15vw,9rem)/.85 Syne,sans-serif;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--accent) 60%,transparent);margin-bottom:6px;letter-spacing:-.06em}
+.section-title h2{font-size:clamp(1.9rem,6vw,3.4rem);letter-spacing:-.045em;line-height:1.05;margin:0;background:linear-gradient(100deg,#fff,var(--accent2) 60%,var(--accent3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.section-title p{font-size:.95rem;margin:12px 0 0;color:#a4aecb}
+.section-code{position:absolute;right:0;top:12px}
+.workspace,.bottom-grid{gap:28px}.bottom-grid{margin-top:0}
+.workspace>.panel:nth-child(1){--mod:var(--accent)}.workspace>.panel:nth-child(2){--mod:var(--accent2)}
+.bottom-grid>.panel:nth-child(1){--mod:var(--accent3)}.bottom-grid>.panel:nth-child(2){--mod:var(--gold)}.bottom-grid>.panel:nth-child(3){--mod:var(--good)}.bottom-grid>.panel:nth-child(4){--mod:var(--accent)}
+.panel{--mod:var(--accent);padding:30px;border-radius:28px;background:linear-gradient(150deg,rgba(18,22,42,.55),rgba(8,11,24,.4));backdrop-filter:blur(18px) saturate(1.25);-webkit-backdrop-filter:blur(18px) saturate(1.25);border:1px solid color-mix(in srgb,var(--mod) 32%,transparent);box-shadow:0 30px 80px rgba(0,0,0,.35),0 0 70px color-mix(in srgb,var(--mod) 9%,transparent)}
+.panel:before{background:radial-gradient(ellipse at 0 0,color-mix(in srgb,var(--mod) 16%,transparent),transparent 58%)}
+.panel:after{counter-increment:mod;content:counter(mod,decimal-leading-zero);position:absolute;right:18px;bottom:-18px;font:800 7rem/1 Syne,sans-serif;color:color-mix(in srgb,var(--mod) 8%,transparent);pointer-events:none;letter-spacing:-.06em}
+.panel h3{font-size:1.6rem;letter-spacing:-.035em;margin-top:10px;line-height:1.1}
+.kicker{color:var(--mod);font-size:.64rem}
+.pill{color:var(--mod);border-color:color-mix(in srgb,var(--mod) 35%,transparent);background:color-mix(in srgb,var(--mod) 10%,transparent)}
+.panel-desc{font-size:.92rem;line-height:1.7;color:#a3aecb}
+.chip,.btn,.theme-btn{font-family:Outfit,sans-serif}.chip{font-size:.84rem;padding:9px 12px}.btn{font-size:.84rem;padding:11px 14px}.theme-btn{font-size:.78rem}
+.result{font-size:.88rem}.compound-name{font-size:1.05rem}.discovery-item strong{font-size:.84rem}.empty,.mode-note{font-size:.84rem}.control label{font-size:.78rem}
+.js .panel{opacity:0;transform:translateY(46px) scale(.97);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.js .panel.in{opacity:1;transform:none}
+.js .section-title{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}.js .section-title.in{opacity:1;transform:none}
+@media(max-width:900px){.section-title{margin-top:76px}.panel{padding:20px;border-radius:22px}.panel h3{font-size:1.35rem}.panel:after{font-size:5rem}.chapter-pill{font-size:.55rem;padding:7px 11px}}
+@media(prefers-reduced-motion:reduce){.js .panel,.js .section-title{opacity:1;transform:none}}
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}
+</script>
 </head>
-<body>
-
-    <div class="chem-container">
-        
-        <!-- 1. Love Potion Mixer -->
-        <div class="lab-card">
-            <h3>LOVE POTION MIXER (LAB EXPERIMENT)</h3>
-            <div class="ingredient-chips">
-                <div class="chip" onclick="toggleIngredient(this, 'Trust')">Trust</div>
-                <div class="chip" onclick="toggleIngredient(this, 'Romance')">Romance</div>
-                <div class="chip" onclick="toggleIngredient(this, 'Care')">Care</div>
-                <div class="chip" onclick="toggleIngredient(this, 'Madness')">Madness</div>
-            </div>
-            <div class="beaker-box">
-                <div class="potion-liquid" id="potionLiquid"></div>
-            </div>
-            <button class="action-btn" onclick="synthesizePotion()">Synthesize Reaction</button>
-            <div class="potion-output" id="potionOutput">Select ingredients & mix to test reaction!</div>
-            <div class="section-desc">Interactive synthesis module. Select multiple components and trigger chemical mixing to synthesize custom emotional compounds.</div>
-        </div>
-
-        <!-- 2. Interactive Bohr Electron Model -->
-        <div class="lab-card">
-            <h3>BOHR ATOMIC ORBIT (SPIN CONTROL)</h3>
-            <div class="bohr-container">
-                <div class="orbit orbit-1" id="orbit1"><div class="electron"></div></div>
-                <div class="orbit orbit-2" id="orbit2"><div class="electron"></div></div>
-                <div class="nucleus">A&N</div>
-            </div>
-            <input type="range" min="1" max="15" value="6" class="speed-slider" id="speedSlider" oninput="changeOrbitSpeed(this.value)">
-            <div class="section-desc">Dynamic atomic configuration. Use the slider manually to increase or decrease electron rotation velocity around the core.</div>
-        </div>
-
-        <!-- 3. HSC Le Chatelier's Equilibrium Chamber -->
-        <div class="lab-card">
-            <h3>LE CHATELIER'S EQUILIBRIUM CHAMBER</h3>
-            <div class="chamber-box">
-                <div class="chamber-atom" id="atomA">A</div>
-                <span style="color: #8b949e; font-weight: bold;">+</span>
-                <div class="chamber-atom" id="atomN">N</div>
-                <div class="equilibrium-arrow">⇌</div>
-                <div class="product-badge">
-                    <!-- Custom Shimmering/Gleaming Heart SVG -->
-                    <svg class="shimmer-heart" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#heartGradient)"/>
-                        <!-- Sparkle / Shimmer Stars -->
-                        <path class="sparkle-star" d="M18 5L18.5 6.5L20 7L18.5 7.5L18 9L17.5 7.5L16 7L17.5 6.5L18 5Z" fill="#ffffff"/>
-                        <path class="sparkle-star" style="animation-delay: 1.5s;" d="M6 12L6.3 12.8L7.1 13.1L6.3 13.4L6 14.2L5.7 13.4L4.9 13.1L5.7 12.8L6 12Z" fill="#5ccfe6"/>
-                        <defs>
-                            <linearGradient id="heartGradient" x1="2" y1="3" x2="22" y2="21.35" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#ff5864"/>
-                                <stop offset="1" stop-color="#f43f5e"/>
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-            </div>
-            <button class="action-btn" onclick="applyEquilibriumStress()">Apply External Stress</button>
-            <div class="equilibrium-output" id="equilibriumText">System in perfect dynamic equilibrium (Kc = ∞)</div>
-            <div class="section-desc">HSC Chemistry principle simulation. Applying external pressure or stress shifts the system entirely toward forward reaction, proving bond indestructibility.</div>
-        </div>
-
+<body data-theme="pink">
+<canvas id="bgCanvas" aria-hidden="true"></canvas><div class="bg-vignette"></div>
+<div class="progress"><i id="progBar"></i></div><div class="chapter-pill" id="chapterPill">00 · INTRO</div>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="brandmark">A×N</div><div><div class="brand-title">Chemistry Chamber <span style="color:var(--accent)">2.0</span></div><div class="brand-sub">Ariyan × Nabila · Molecular synthesis environment</div></div></div>
+  <div class="status"><i></i><span id="systemStatus">SYSTEM READY</span></div>
+</header>
+<section class="hero" id="s0">
+  <div>
+    <div class="eyebrow">Interactive molecular laboratory / 001</div>
+    <h1>Make a little<br><span class="gradient">chemistry.</span></h1>
+    <p>Explore a fictional Ariyan–Nabila molecular universe. Build a randomized bond concept, inspect a real-time 3D molecular model, and run a visual reaction sequence. Fictional compounds are kept separate from the scientific reference library.</p>
+    <div class="hero-chips"><span class="tag">3D MOLECULAR UNIVERSE</span><span class="tag">SYNTHESIS ENGINE</span><span class="tag">DISCOVERY MODE</span></div>
+  </div>
+  <div class="viewport" id="mainViewport" aria-label="Interactive 3D molecular universe">
+    <div class="view-label">MOLECULAR UNIVERSE<small>DRAG TO ORBIT · PINCH OR SCROLL TO ZOOM</small></div><div class="view-badge" id="qualityBadge">HIGH QUALITY</div>
+    <div class="view-controls"><button class="icon-btn" id="resetCamera" type="button">Reset view</button><button class="icon-btn" id="toggleSpin" type="button">Pause spin</button></div>
+  </div>
+</section>
+<div class="section-title" id="s1" data-num="01"><div><h2>Laboratory workspace</h2><p>Every experiment is interactive. Fictional output is labeled as fictional.</p></div><span class="section-code">LAB / 001—005</span></div>
+<section class="workspace">
+  <article class="panel">
+    <div class="panel-head"><div><div class="kicker">MODULE 01 / SYNTHESIS ENGINE</div><h3>Advanced Bond Synthesizer</h3></div><span class="pill">RANDOMIZED OUTPUT</span></div>
+    <p class="panel-desc">Select reagents to influence the experiment, then synthesize a chemistry-inspired Ariyan–Nabila compound with a generated name, bond concept, rarity and fictional formula.</p>
+    <div class="ingredients" id="ingredients">
+      <button class="chip" type="button" data-reagent="Trust" aria-pressed="false">Trust</button><button class="chip" type="button" data-reagent="Romance" aria-pressed="false">Romance</button><button class="chip" type="button" data-reagent="Care" aria-pressed="false">Care</button><button class="chip" type="button" data-reagent="Madness" aria-pressed="false">Madness</button><button class="chip" type="button" data-reagent="Patience" aria-pressed="false">Patience</button><button class="chip" type="button" data-reagent="Loyalty" aria-pressed="false">Loyalty</button>
     </div>
-
-    <!-- Classical Bottom Info Panel -->
-    <div class="info-panel">
-        <h2>CHEMISTRY OF LOVE LABORATORY</h2>
-        <p>Potion Synthesis • Atomic Orbits • Le Chatelier's Equilibrium</p>
+    <div class="mixer-grid">
+      <div class="beaker-stage"><div class="beaker"><div class="beaker-neck"></div><div class="beaker-glass"><div class="liquid" id="liquid"><i class="bubble" style="left:20%;animation-delay:-.4s"></i><i class="bubble" style="left:47%;animation-delay:-1.5s"></i><i class="bubble" style="left:70%;animation-delay:-2.1s"></i><i class="bubble" style="left:34%;animation-delay:-.9s"></i></div></div></div></div>
+      <div class="stats"><div class="stat"><span>REAGENTS LOADED</span><strong id="reagentCount">00 / 06</strong></div><div class="stat"><span>SIMULATED ENERGY</span><strong id="energyValue">0 kJ·mol⁻¹</strong></div><div class="meter"><span id="energyMeter"></span></div><div class="stat"><span>ENGINE STATUS</span><strong id="mixerStatus">STANDBY</strong></div><div class="stat"><span>DISCOVERIES SAVED</span><strong id="savedCount">00</strong></div></div>
     </div>
+    <div class="btnrow"><button class="btn primary" id="synthesize" type="button">✦ Synthesize compound</button><button class="btn" id="clearReagents" type="button">Reset reagents</button><button class="btn" id="saveCompound" type="button" disabled>☆ Save discovery</button></div>
+    <div class="result" id="compoundResult" aria-live="polite"><span class="result-label">Synthesis report</span>Load at least one reagent, then start synthesis.</div>
+    <div class="btnrow" style="margin-top:10px"><button class="btn" id="copyCompound" type="button" disabled>Copy compound data</button><button class="btn" id="exportReport" type="button" disabled>Export text report</button><button class="btn" id="snapshot" type="button">Save 3D snapshot</button></div>
+    <p class="fine">All Ariyan–Nabila compounds and their formula-style labels are fictional. Energy values are illustrative display values, not experimentally measured chemistry data.</p>
+  </article>
 
-    <script>
-        // 1. Potion Mixer Logic
-        let selectedCount = 0;
-        function toggleIngredient(element, name) {
-            element.classList.toggle('selected');
-            if(element.classList.contains('selected')) {
-                selectedCount++;
-            } else {
-                selectedCount--;
-            }
-            let heightPercent = selectedCount * 25;
-            document.getElementById('potionLiquid').style.height = heightPercent + '%';
-        }
+  <article class="panel">
+    <div class="panel-head"><div><div class="kicker">MODULE 02 / ATOMIC CONTROL</div><h3>Atomic Configuration</h3></div><span class="pill">LIVE MODEL</span></div>
+    <p class="panel-desc">Adjust electron count, orbital speed, and the appearance of the model. Drag the model to inspect it from different angles.</p>
+    <div class="molecule-stage" id="atomViewport"><div class="stage-label">A–N CORE / ORBITAL DISPLAY</div></div>
+    <div class="control-grid" style="margin-top:11px">
+      <div class="control"><label for="electronSlider">Electron nodes <output id="electronValue">6</output></label><input id="electronSlider" type="range" min="2" max="12" value="6"></div>
+      <div class="control"><label for="orbitalSpeed">Orbital speed <output id="speedValue">1.0×</output></label><input id="orbitalSpeed" type="range" min="1" max="20" value="10"></div>
+      <div class="control"><label for="bondStyle">Bond visualization</label><select id="bondStyle"><option value="single">Single bridge</option><option value="double">Double bridge</option><option value="network">Network bonds</option></select></div>
+      <div class="control"><label for="labelToggle">Atom labels</label><select id="labelToggle"><option value="on">Show labels</option><option value="off">Hide labels</option></select></div>
+    </div>
+    <div class="hud">
+      <div class="hudbox"><span>CORE A</span><strong id="coordA">0.00, 0.00</strong></div><div class="hudbox"><span>CORE N</span><strong id="coordN">1.42, 0.00</strong></div><div class="hudbox"><span>BOND DISTANCE</span><strong id="bondDistance">1.42 Å*</strong></div><div class="hudbox"><span>PARTICLE COUNT</span><strong id="particleCount">120</strong></div>
+    </div>
+    <p class="fine">*The displayed distance is a normalized visual parameter, not a measured bond length. This is an illustrative molecular visualization, not a validated quantum-chemical model.</p>
+  </article>
+</section>
 
-        function synthesizePotion() {
-            const output = document.getElementById('potionOutput');
-            if(selectedCount === 0) {
-                output.textContent = "Please select at least one ingredient first!";
-            } else if(selectedCount < 3) {
-                output.textContent = "Reaction incomplete! Add more ingredients for full synthesis.";
-            } else {
-                output.textContent = "SUCCESS! Perfect Unconditional Love Compound Formed!";
-            }
-        }
+<div class="section-title" id="s2" data-num="02"><div><h2>Reaction and discovery systems</h2><p>Run a visual reaction, explore saved discoveries, and switch between fictional and real chemistry.</p></div><span class="section-code">LAB / 006—008</span></div>
+<section class="bottom-grid">
+  <article class="panel">
+    <div class="panel-head"><div><div class="kicker">MODULE 03 / REACTION SIMULATOR</div><h3>Le Chatelier Reaction Sequence</h3></div><span class="pill">VISUAL SIMULATION</span></div>
+    <p class="panel-desc">Play a timed reactant-to-product animation, apply a conceptual stress, or restore the visual equilibrium.</p>
+    <div class="molecule-stage" id="reactionViewport"><div class="stage-label">REACTION PROGRESS / A + N ⇌ AN</div></div>
+    <div class="sim-track"><span id="reactionProgress"></span></div><div class="sim-readout"><span id="reactionStatus">READY TO RUN</span><span id="reactionPercent">0%</span></div>
+    <div class="btnrow" style="margin-top:12px"><button class="btn primary" id="playReaction" type="button">▶ Run reaction</button><button class="btn" id="pauseReaction" type="button">Pause</button><button class="btn" id="resetReaction" type="button">Reset</button><button class="btn" id="applyStress" type="button">Apply stress</button></div>
+    <div class="result" id="reactionNote"><span class="result-label">Reaction log</span>Ready. Start the visual sequence to observe the product formation.</div>
+  </article>
+  <article class="panel">
+    <div class="panel-head"><div><div class="kicker">MODULE 04 / SECRET LAB</div><h3>Discovery Catalogue</h3></div><span class="pill" id="discoveryPill">0 DISCOVERIES</span></div>
+    <p class="panel-desc">Save synthesized compounds and build your personal catalogue. Discovery rarity is a game mechanic, not a scientific classification.</p>
+    <div class="stats"><div class="stat"><span>DISCOVERY LEVEL</span><strong id="discoveryLevel">Uninitiated</strong></div><div class="stat"><span>RAREST FIND</span><strong id="rarestFind">None yet</strong></div></div>
+    <div class="discovery-list" id="discoveryList"><div class="empty">No discoveries saved yet. Synthesize a compound and tap “Save discovery” to begin your collection.</div></div>
+    <div class="btnrow" style="margin-top:11px"><button class="btn" id="exportCatalogue" type="button">Export catalogue</button><button class="btn" id="clearCatalogue" type="button">Clear catalogue</button></div>
+  </article>
+  <article class="panel">
+    <div class="panel-head"><div><div class="kicker">MODULE 05 / SCIENTIFIC REFERENCE</div><h3>Real Chemistry Mode</h3></div><span class="pill">REFERENCE</span></div>
+    <p class="panel-desc">Switch away from the fictional bond generator to read short, scientifically grounded explanations of real bonding concepts.</p>
+    <div class="control"><label for="referenceSelect">Choose a concept</label><select id="referenceSelect"><option value="3c2e">Three-center two-electron bond</option><option value="5c4e">Five-center four-electron bond</option><option value="agostic">Agostic interaction</option><option value="backbond">Pi backbonding</option><option value="charge">Charge-transfer complex</option><option value="halogen">Halogen bonding</option><option value="quad">Quadruple and higher-order bonds</option><option value="aromatic">Aromaticity and antiaromaticity</option></select></div>
+    <div class="mode-note" id="referenceNote" style="margin-top:11px"><strong>Three-center two-electron bond</strong><br>A pair of electrons is delocalized over three atoms. This bonding model is commonly introduced using electron-deficient molecules such as diborane, B₂H₆.</div>
+    <p class="fine">Reference descriptions summarize general concepts; specialized bonding assignments depend on the actual molecule and evidence.</p>
+  </article>
+  <article class="panel">
+    <div class="panel-head"><div><div class="kicker">SYSTEM / VISUAL & PERFORMANCE</div><h3>Environment Settings</h3></div><span class="pill">DEVICE AWARE</span></div>
+    <p class="panel-desc">Change the chamber's visual palette and rendering quality. Lower quality reduces rendering resolution and particle counts for mobile performance.</p>
+    <div style="margin-bottom:15px"><div class="kicker" style="margin-bottom:9px">VISUAL THEME</div><div class="theme-row"><button class="theme-btn" data-theme-choice="pink" aria-pressed="true">Quantum Pink</button><button class="theme-btn" data-theme-choice="cyan" aria-pressed="false">Cryogenic Cyan</button><button class="theme-btn" data-theme-choice="violet" aria-pressed="false">Violet Plasma</button><button class="theme-btn" data-theme-choice="minimal" aria-pressed="false">Minimal Lab</button></div></div>
+    <div class="control-grid">
+      <div class="control"><label for="qualitySelect">Render quality</label><select id="qualitySelect"><option value="auto">Auto (recommended)</option><option value="low">Low / battery saver</option><option value="high" selected>High detail</option></select></div>
+      <div class="control"><label for="motionSelect">Motion preference</label><select id="motionSelect"><option value="full">Full motion</option><option value="reduced">Reduced motion</option></select></div>
+    </div>
+    <div class="result" style="margin-top:12px"><span class="result-label">Performance profile</span><span id="performanceNote">High detail is selected by default. You can switch to Auto or Low / battery saver at any time.</span></div>
+  </article>
+</section>
+<footer class="footer"><strong>ARIYAN × NABILA · CHEMISTRY CHAMBER 2.0</strong><span>FICTIONAL COMPOUNDS · SCIENTIFIC CONCEPTS SEPARATED</span></footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module">
+import * as THREE from 'three';
 
-        // 2. Bohr Orbit Speed Control
-        function changeOrbitSpeed(val) {
-            const o1 = document.getElementById('orbit1');
-            const o2 = document.getElementById('orbit2');
-            o1.style.animationDuration = (16 - val) + 's';
-            o2.style.animationDuration = (19 - val) + 's';
-        }
+const $ = id => document.getElementById(id);
+const state = {theme:'pink', quality:'high', reduced:false, spinning:true, speed:1, electrons:6, labels:true, bondStyle:'single', selected:new Set(), current:null, discoveries:[], reaction:0, reactionPlaying:false, stressed:false, toastTimer:0};
+const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (prefersReduced) { state.reduced = true; $('motionSelect').value = 'reduced'; }
+function toast(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove('show'),2100);}
+function rand(min,max){return Math.random()*(max-min)+min;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+const bonds = [
+ {type:'Three-center two-electron bond',short:'3c–2e',prefix:'Tricentric',formula:'Ari₃Nab₂',explain:'A pair of electrons is delocalized over three atoms.'},
+ {type:'Three-center four-electron bond',short:'3c–4e',prefix:'Tetraleptic',formula:'Ari₃Nab₄',explain:'A multicenter bonding description with four electrons distributed across three centers.'},
+ {type:'Five-center four-electron bond',short:'5c–4e',prefix:'Pentacentric',formula:'Ari₅Nab₄',explain:'A fictional five-center, four-electron bond concept.'},
+ {type:'Delta-type bond',short:'δ',prefix:'Deltic',formula:'δ(Ari–Nab)',explain:'Delta bonding is associated with specific orbital symmetries in some metal–metal bonds.'},
+ {type:'Phi-orbital bond',short:'φ',prefix:'Phi-orbital',formula:'φ(Ari↔Nab)',explain:'A fictionalized phi-orbital motif inspired by high-angular-momentum orbital terminology.'},
+ {type:'Agostic interaction',short:'Agostic',prefix:'Agostic',formula:'Ari–H···Nab',explain:'An agostic interaction commonly involves a C–H bond interacting with an electron-deficient metal center.'},
+ {type:'Anagostic interaction',short:'Anagostic',prefix:'Anagostic',formula:'Ari···H–Nab',explain:'Anagostic interactions are distinct from agostic interactions and often have a different geometry and bonding interpretation.'},
+ {type:'Banana / bent bond',short:'Bent',prefix:'Banana-bent',formula:'⌒(Ari–Nab)',explain:'Bent bonds are discussed in strained molecules, including the bonding in cyclopropane.'},
+ {type:'Pi backbonding complex',short:'π-backbonding',prefix:'Backbonded',formula:'π→π*(Ari–Nab)',explain:'Pi backbonding involves donation from filled metal orbitals into suitable antibonding orbitals of a ligand.'},
+ {type:'Quintuple-bond motif',short:'Quintuple',prefix:'Quintuple',formula:'Ari≣≣Nab · 5×',explain:'Quintuple bonds have been reported for specialized metal–metal systems; assignments require careful electronic-structure analysis.'},
+ {type:'Sextuple-bond motif',short:'Sextuple',prefix:'Sextuple',formula:'Ari≣≣≣Nab · 6×',explain:'Sextuple-bond descriptions are highly specialized and depend on the metal system and bonding model.'},
+ {type:'Quadruple-bond motif',short:'Quadruple',prefix:'Quadruple',formula:'Ari≣≣Nab · 4×',explain:'Quadruple bonds are known in some metal–metal compounds and involve multiple bonding components.'},
+ {type:'Antiaromatic metal–metal motif',short:'Antiaromatic',prefix:'Antiaromatic',formula:'[Ari–Nab]ₙ · anti-π',explain:'Antiaromaticity is a molecular electronic-structure concept; whether a system is antiaromatic depends on its structure and electron count.'},
+ {type:'Charge-transfer complex',short:'Charge-transfer',prefix:'Charge-transfer',formula:'Ari⁺ ⇄ Nab⁻',explain:'Charge-transfer complexes feature partial electron donation between molecular partners.'},
+ {type:'Halogen-bonded complex',short:'Halogen bond',prefix:'Halogen-linked',formula:'Ari–X···Nab',explain:'A halogen bond is a noncovalent interaction involving an electrophilic region associated with a halogen atom.'},
+ {type:'Chalcogen-bonded complex',short:'Chalcogen bond',prefix:'Chalcogen-linked',formula:'Ari–Ch···Nab',explain:'A chalcogen bond is a noncovalent interaction involving an electrophilic region associated with a chalcogen atom.'},
+ {type:'Pnictogen-bonded complex',short:'Pnictogen bond',prefix:'Pnictogen-linked',formula:'Ari–Pn···Nab',explain:'A pnictogen bond is a noncovalent interaction involving an electrophilic region associated with a pnictogen atom.'},
+ {type:'Aromatic dimetallic motif',short:'Aromatic dimetallic',prefix:'Aromadimetallic',formula:'Ari₂Nab₂ · π-delocalized',explain:'Aromaticity requires a suitable cyclic, conjugated electronic structure; the label cannot be inferred from a name alone.'},
+ {type:'Hyperconjugative interaction',short:'Hyperconjugative',prefix:'Hyperconjugative',formula:'σ(Ari–Nab)→π*',explain:'Hyperconjugation describes electron delocalization involving sigma bonds and adjacent orbitals.'},
+ {type:'Resonance-stabilized complex',short:'Resonance',prefix:'Resonance-locked',formula:'Ari↔Nab↔Ari',explain:'Resonance structures are alternative representations of electron distribution, not rapidly interconverting molecular forms.'}
+];
+const rarityData=[{name:'Common',min:0,color:'#9aa8c8'},{name:'Uncommon',min:.48,color:'#64d9f2'},{name:'Rare',min:.72,color:'#a68bff'},{name:'Epic',min:.88,color:'#ff6cab'},{name:'Legendary',min:.97,color:'#ffd88c'}];
+function rarity(){const r=Math.random();let item=rarityData[0];for(const x of rarityData)if(r>=x.min)item=x;return item;}
+function getSaved(){try{const x=JSON.parse(localStorage.getItem('chemistryChamberDiscoveries')||'[]');return Array.isArray(x)?x:[]}catch{return[]}}
+state.discoveries=getSaved();
+function persist(){try{localStorage.setItem('chemistryChamberDiscoveries',JSON.stringify(state.discoveries))}catch{}}
+function updateSavedCount(){ $('savedCount').textContent=String(state.discoveries.length).padStart(2,'0');$('discoveryPill').textContent=state.discoveries.length+' DISCOVER'+(state.discoveries.length===1?'Y':'IES');$('discoveryLevel').textContent=state.discoveries.length>=20?'Master Synthesist':state.discoveries.length>=10?'Senior Researcher':state.discoveries.length>=5?'Researcher':state.discoveries.length?'Apprentice':'Uninitiated';const rare=[...state.discoveries].sort((a,b)=>rarityData.findIndex(x=>x.name===b.rarity)-rarityData.findIndex(x=>x.name===a.rarity))[0];$('rarestFind').textContent=rare?rare.rarity:'None yet';renderDiscoveries();}
+function renderDiscoveries(){const list=$('discoveryList');list.replaceChildren();if(!state.discoveries.length){const d=document.createElement('div');d.className='empty';d.textContent='No discoveries saved yet. Synthesize a compound and tap “Save discovery” to begin your collection.';list.append(d);return}state.discoveries.slice().reverse().forEach(item=>{const row=document.createElement('div');row.className='discovery-item';const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=item.name;const small=document.createElement('small');small.textContent=item.id+' · '+item.rarity.toUpperCase()+' · '+item.bond;info.append(strong,small);const btn=document.createElement('button');btn.className='icon-btn';btn.textContent='Load';btn.type='button';btn.addEventListener('click',()=>{state.current=item;renderCompound(item);toast('Discovery loaded');});row.append(info,btn);list.append(row);});}
+function createCompound(){const bond=pick(bonds),rare=rarity(),serial=Math.random().toString(36).slice(2,7).toUpperCase();const lead=pick(['Ariyan–Nabila','Ariyan-Nabila','AriNab','Ariyan/Nabila']);const suffix=pick(['Resonance Complex','Molecular Union','Orbital Assembly','Bond Architecture','Synthesis Adduct','Delocalized Pair']);const n={id:'AN-'+serial,name:lead+' '+bond.prefix+' '+suffix,bond:bond.type,short:bond.short,formula:bond.formula,rarity:rare.name,rarityColor:rare.color,reagents:[...state.selected],energy:Math.round(state.selected.size*41+rand(13,89)),explain:bond.explain,created:new Date().toISOString(),fictional:true};return n;}
+function renderCompound(c){const el=$('compoundResult');el.replaceChildren();const label=document.createElement('span');label.className='result-label';label.textContent='Synthesis complete · fictional compound';const name=document.createElement('div');name.className='compound-name';name.textContent=c.name;const formula=document.createElement('span');formula.className='formula';formula.textContent=c.formula+' · '+c.short;const meta=document.createElement('div');meta.style.cssText='margin-top:6px;color:#9aa8c8;font-size:.66rem';meta.textContent=c.id+' · '+c.rarity+' · '+c.bond;const note=document.createElement('div');note.style.cssText='margin-top:5px;font-size:.68rem;color:#8c9ab9';note.textContent='Inspired by real terminology; not a verified real compound.';el.append(label,name,formula,meta,note);$('saveCompound').disabled=false;$('copyCompound').disabled=false;$('exportReport').disabled=false;state.current=c;updateMoleculeForCompound(c);}
+function compoundText(c){return ['CHEMISTRY CHAMBER 2.0 — COMPOUND REPORT','Name: '+c.name,'ID: '+c.id,'Bond concept: '+c.bond,'Formula-style label: '+c.formula,'Short notation: '+c.short,'Rarity (game mechanic): '+c.rarity,'Selected reagents: '+(c.reagents?.join(', ')||'None recorded'),'Illustrative energy display: '+c.energy+' kJ·mol⁻¹','Scientific status: Fictional compound; not a validated chemical species.','Bond concept note: '+c.explain,'Created: '+c.created].join('\\n');}
+function downloadText(filename,content){const blob=new Blob([content],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('ingredients').addEventListener('click',e=>{const b=e.target.closest('[data-reagent]');if(!b)return;const v=b.dataset.reagent;if(state.selected.has(v))state.selected.delete(v);else state.selected.add(v);b.classList.toggle('selected',state.selected.has(v));b.setAttribute('aria-pressed',String(state.selected.has(v)));const n=state.selected.size;$('reagentCount').textContent=String(n).padStart(2,'0')+' / 06';$('energyValue').textContent=(n?Math.round(n*41+(n*17%23)):0)+' kJ·mol⁻¹';$('energyMeter').style.width=(n/6*100)+'%';$('liquid').style.height=(n/6*82)+'%';$('liquid').classList.toggle('active',n>0);$('mixerStatus').textContent=n?'REAGENTS LOADED':'STANDBY';});
+$('synthesize').addEventListener('click',()=>{if(!state.selected.size){toast('Select at least one reagent first');$('mixerStatus').textContent='NO REAGENTS';return}const c=createCompound();$('mixerStatus').textContent='SYNTHESIS COMPLETE';renderCompound(c);if(window.reactionFx)window.reactionFx();toast('New fictional compound synthesized');});
+$('clearReagents').addEventListener('click',()=>{state.selected.clear();document.querySelectorAll('[data-reagent]').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-pressed','false')});$('reagentCount').textContent='00 / 06';$('energyValue').textContent='0 kJ·mol⁻¹';$('energyMeter').style.width='0%';$('liquid').style.height='0%';$('liquid').classList.remove('active');$('mixerStatus').textContent='STANDBY';toast('Reagents reset');});
+$('saveCompound').addEventListener('click',()=>{if(!state.current)return;if(state.discoveries.some(x=>x.id===state.current.id)){toast('This discovery is already saved');return}state.discoveries.push(state.current);persist();updateSavedCount();toast('Discovery saved to this browser');});
+$('copyCompound').addEventListener('click',async()=>{if(!state.current)return;try{await navigator.clipboard.writeText(compoundText(state.current));toast('Compound data copied')}catch{downloadText('compound-'+state.current.id+'.txt',compoundText(state.current));toast('Clipboard unavailable; report downloaded')}});
+$('exportReport').addEventListener('click',()=>{if(state.current)downloadText('compound-'+state.current.id+'.txt',compoundText(state.current));});
+$('exportCatalogue').addEventListener('click',()=>{if(!state.discoveries.length){toast('No discoveries to export');return}downloadText('ariyan-nabila-discovery-catalogue.txt',state.discoveries.map(compoundText).join('\\n\\n'+'—'.repeat(30)+'\\n\\n'));});
+$('clearCatalogue').addEventListener('click',()=>{if(!state.discoveries.length){toast('Catalogue is already empty');return}if(confirm('Clear all saved discoveries from this browser?')){state.discoveries=[];persist();updateSavedCount();toast('Catalogue cleared')}});
+$('snapshot').addEventListener('click',()=>{if(window.saveMolecularSnapshot)window.saveMolecularSnapshot();else toast('3D renderer is still starting');});
+updateSavedCount();
 
-        // 3. Le Chatelier's Stress Equilibrium Logic
-        let stressClickCount = 0;
-        function applyEquilibriumStress() {
-            stressClickCount++;
-            const atomA = document.getElementById('atomA');
-            const atomN = document.getElementById('atomN');
-            const text = document.getElementById('equilibriumText');
+const reference={
+ '3c2e':['Three-center two-electron bond','A pair of electrons is delocalized over three atoms. This model is commonly introduced using electron-deficient molecules such as diborane (B₂H₆).'],
+ '5c4e':['Five-center four-electron bond','A multicenter bonding description distributes four electrons across five centers. Whether this model is appropriate depends on the molecule and its electronic structure.'],
+ agostic:['Agostic interaction','An agostic interaction commonly involves a C–H bond interacting with an electron-deficient metal center. It is identified using structural and spectroscopic evidence, not just a name.'],
+ backbond:['Pi backbonding','In metal–ligand pi backbonding, electron density can be donated from filled metal d orbitals into suitable ligand antibonding orbitals. Carbon monoxide complexes are a classic example.'],
+ charge:['Charge-transfer complex','A charge-transfer complex involves partial electron donation between an electron donor and an acceptor. The extent of transfer depends on their electronic properties and environment.'],
+ halogen:['Halogen bonding','A halogen bond is a noncovalent interaction involving an electrophilic region associated with a halogen atom and a Lewis base. Geometry and molecular context matter.'],
+ quad:['Quadruple and higher-order bonds','Some metal–metal compounds are described as having quadruple bonds, and specialized systems have been assigned higher bond orders. These descriptions rely on electronic-structure analysis.'],
+ aromatic:['Aromaticity and antiaromaticity','Aromaticity describes special stabilization in suitable cyclic, conjugated systems. Antiaromaticity is associated with destabilization under the relevant electronic conditions; neither property follows from a label alone.']
+};
+$('referenceSelect').addEventListener('change',()=>{const [title,body]=reference[$('referenceSelect').value];$('referenceNote').replaceChildren();const strong=document.createElement('strong');strong.textContent=title;const br=document.createElement('br');$('referenceNote').append(strong,br,document.createTextNode(body));});
+document.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>{state.theme=b.dataset.themeChoice;document.body.dataset.theme=state.theme;document.querySelectorAll('[data-theme-choice]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));toast('Theme changed: '+b.textContent);}));
+$('motionSelect').addEventListener('change',()=>{state.reduced=$('motionSelect').value==='reduced';toast(state.reduced?'Reduced motion enabled':'Full motion enabled');});
+$('qualitySelect').addEventListener('change',()=>{state.quality=$('qualitySelect').value;applyQuality();});
+$('electronSlider').addEventListener('input',()=>{state.electrons=Number($('electronSlider').value);$('electronValue').textContent=state.electrons;buildAtomElectrons();});
+$('orbitalSpeed').addEventListener('input',()=>{state.speed=Number($('orbitalSpeed').value)/10;$('speedValue').textContent=state.speed.toFixed(1)+'×';});
+$('bondStyle').addEventListener('change',()=>{state.bondStyle=$('bondStyle').value;buildAtomBonds();});
+$('labelToggle').addEventListener('change',()=>{state.labels=$('labelToggle').value==='on';updateLabels();});
+let reactionFrame=0,reactionLast=0;
+function setReactionProgress(v){state.reaction=Math.max(0,Math.min(100,v));$('reactionProgress').style.width=state.reaction+'%';$('reactionPercent').textContent=Math.round(state.reaction)+'%';if(window.setReactionVisual)window.setReactionVisual(state.reaction,state.stressed);}
+$('playReaction').addEventListener('click',()=>{if(state.reaction>=100)setReactionProgress(0);state.reactionPlaying=true;$('reactionStatus').textContent='REACTION IN PROGRESS';$('reactionNote').textContent='Visual reaction sequence running. Progress is illustrative, not a kinetic model.';});
+$('pauseReaction').addEventListener('click',()=>{state.reactionPlaying=false;$('reactionStatus').textContent='PAUSED';});
+$('resetReaction').addEventListener('click',()=>{state.reactionPlaying=false;state.stressed=false;setReactionProgress(0);$('reactionStatus').textContent='READY TO RUN';$('reactionNote').textContent='Reaction reset. No chemical equilibrium calculation is being performed.';});
+$('applyStress').addEventListener('click',()=>{state.stressed=!state.stressed;$('reactionStatus').textContent=state.stressed?'CONCEPTUAL STRESS APPLIED':'STRESS REMOVED';$('reactionNote').textContent=state.stressed?'Illustrative balance shifted toward product. Real equilibrium response depends on reaction conditions.':'Conceptual stress removed. Visual balance restored.';if(window.setReactionVisual)window.setReactionVisual(state.reaction,state.stressed);});
+function reactionLoop(t){requestAnimationFrame(reactionLoop);if(!reactionLast)reactionLast=t;const dt=Math.min(.05,(t-reactionLast)/1000);reactionLast=t;if(state.reactionPlaying){setReactionProgress(state.reaction+dt*13);if(state.reaction>=100){state.reactionPlaying=false;$('reactionStatus').textContent='SEQUENCE COMPLETE';$('reactionNote').textContent='Visual sequence complete. This animation does not predict a real reaction yield.'}}}
+requestAnimationFrame(reactionLoop);
 
-            atomA.style.borderColor = "#f43f5e";
-            atomA.style.color = "#f43f5e";
-            atomN.style.borderColor = "#f43f5e";
-            atomN.style.color = "#f43f5e";
-
-            if(stressClickCount % 2 === 1) {
-                text.textContent = "Stress Applied! Le Chatelier's shift: 100% Forward (Maximum Affection Yield)";
-            } else {
-                text.textContent = "Equilibrium Restored: External stress neutralized instantly!";
-                atomA.style.borderColor = "#5ccfe6";
-                atomA.style.color = "#5ccfe6";
-                atomN.style.borderColor = "#5ccfe6";
-                atomN.style.color = "#5ccfe6";
-            }
-        }
-    </script>
+let rendererMain, rendererAtom, rendererReaction, mainScene, atomScene, reactionScene, mainCamera, atomCamera, reactionCamera, mainRoot, atomRoot, reactionRoot;
+let mainControls={drag:false,x:0,y:0,rotX:0.15,rotY:0.3,zoom:1,pointers:new Map(),pinch:0};
+let qualityConfig={dpr:1.25,particles:90,segments:24};
+function applyQuality(){const val=$('qualitySelect').value;const mobile=matchMedia('(max-width: 760px)').matches;qualityConfig=val==='low'?{dpr:1,particles:30,segments:12}:val==='high'?{dpr:Math.min(devicePixelRatio||1,1.5),particles:120,segments:32}:{dpr:Math.min(devicePixelRatio||1,mobile?1.1:1.35),particles:mobile?45:75,segments:20};$('qualityBadge').textContent=(val==='auto'?'AUTO':val.toUpperCase())+' QUALITY';$('performanceNote').textContent='Pixel ratio cap: '+qualityConfig.dpr.toFixed(2)+'× · particle budget: '+qualityConfig.particles+' · reduced motion: '+(state.reduced?'on':'off')+'.';[rendererMain,rendererAtom,rendererReaction].forEach(r=>{if(r){r.setPixelRatio(qualityConfig.dpr);r.setSize(r.domElement.parentElement.clientWidth,r.domElement.parentElement.clientHeight,false)}});rebuildDust();}
+function makeRenderer(hostId){const host=$(hostId);const r=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power',preserveDrawingBuffer:hostId==='mainViewport'});r.setPixelRatio(qualityConfig.dpr);r.setSize(host.clientWidth,host.clientHeight,false);r.outputColorSpace=THREE.SRGBColorSpace;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.1;host.appendChild(r.domElement);return r;}
+function sphereMaterial(color,emissive,intensity){return new THREE.MeshStandardMaterial({color,emissive,emissiveIntensity:intensity,metalness:.35,roughness:.27});}
+function addAtom(root,position,radius,color,label){const group=new THREE.Group();group.position.copy(position);const core=new THREE.Mesh(new THREE.SphereGeometry(radius,20,16),sphereMaterial(color,color,1.15));group.add(core);const glow=new THREE.Mesh(new THREE.SphereGeometry(radius*1.35,16,12),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.075,depthWrite:false}));group.add(glow);const ring=new THREE.Mesh(new THREE.TorusGeometry(radius*1.22,.012,5,36),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.72}));ring.rotation.x=Math.PI/2.4;group.add(ring);if(label){const sprite=makeLabel(label,color);sprite.position.set(0,radius+.23,0);group.add(sprite);group.userData.label=sprite}root.add(group);return group;}
+function makeLabel(text,color){const canvas=document.createElement('canvas');canvas.width=128;canvas.height=64;const ctx=canvas.getContext('2d');ctx.clearRect(0,0,128,64);ctx.fillStyle='#ffffff';ctx.font='bold 34px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor=color;ctx.shadowBlur=12;ctx.fillText(text,64,32);const tex=new THREE.CanvasTexture(canvas);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));sprite.scale.set(.52,.26,1);return sprite;}
+function makeBond(a,b,color,radius=.035){const d=new THREE.Vector3().subVectors(b,a);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,d.length(),8,1),new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.5,metalness:.4,roughness:.3}));mesh.position.copy(a).add(b).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return mesh;}
+function addOrbit(root,radius,color,tilt=0){const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.009,4,qualityConfig.segments*2),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.56}));ring.rotation.x=Math.PI/2+tilt;root.add(ring);const electron=new THREE.Mesh(new THREE.SphereGeometry(.065,10,8),new THREE.MeshBasicMaterial({color}));root.add(electron);return {ring,electron,radius,phase:Math.random()*Math.PI*2,tilt,color};}
+function createMolecularRoot(scene){const root=new THREE.Group();scene.add(root);return root;}
+function buildMain(){mainScene=new THREE.Scene();mainScene.fog=new THREE.FogExp2(0x080a13,.055);mainCamera=new THREE.PerspectiveCamera(42,1,.1,100);mainCamera.position.set(0,.4,6.6);mainRoot=createMolecularRoot(mainScene);mainRoot.userData.atoms=[];mainRoot.userData.bonds=[];mainRoot.userData.orbits=[];const a=addAtom(mainRoot,new THREE.Vector3(-.95,0,0),.43,0xff5d9e,'A');const n=addAtom(mainRoot,new THREE.Vector3(.95,0,0),.43,0x59e8f5,'N');mainRoot.userData.atoms.push(a,n);mainRoot.userData.bonds.push(makeBond(a.position,n.position,0xa68bff,.045));for(let i=0;i<3;i++)mainRoot.userData.orbits.push(addOrbit(mainRoot,1.45+i*.28,[0x59e8f5,0xa68bff,0xff5d9e][i],i*.7));const ambient=new THREE.AmbientLight(0x9caeff,1.45);mainScene.add(ambient);const light=new THREE.PointLight(0x9d80ff,30,12);light.position.set(1.5,2.5,3);mainScene.add(light);rebuildDust();rendererMain=makeRenderer('mainViewport');}
+function rebuildDust(){if(!mainRoot||!mainScene)return;const old=mainRoot.getObjectByName('dust');if(old){mainRoot.remove(old);old.geometry.dispose();old.material.dispose()}const count=qualityConfig.particles;const arr=new Float32Array(count*3);for(let i=0;i<count;i++){arr[i*3]=rand(-3.5,3.5);arr[i*3+1]=rand(-2.4,2.4);arr[i*3+2]=rand(-2,2)}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(arr,3));const m=new THREE.PointsMaterial({color:state.theme==='cyan'?0x75f1e7:state.theme==='violet'?0xb69cff:0xa9c9ff,size:.018,transparent:true,opacity:.65,depthWrite:false});const p=new THREE.Points(g,m);p.name='dust';mainRoot.add(p);$('particleCount').textContent=String(count);}
+function updateMoleculeForCompound(c){if(!mainRoot)return;mainRoot.userData.compoundHue=state.theme==='cyan'?0x59e8f5:state.theme==='violet'?0xb18aff:0xff5d9e;mainRoot.userData.pulse=1.5;mainRoot.userData.bondType=c.short;buildAtomBonds();}
+function buildAtomBonds(){if(!atomRoot)return;atomRoot.userData.bonds?.forEach(x=>{atomRoot.remove(x);x.geometry?.dispose();x.material?.dispose()});atomRoot.userData.bonds=[];const posA=new THREE.Vector3(-.75,0,0),posN=new THREE.Vector3(.75,0,0);const count=state.bondStyle==='single'?1:state.bondStyle==='double'?2:3;for(let i=0;i<count;i++){const offset=(i-(count-1)/2)*.09;const bond=makeBond(new THREE.Vector3(posA.x,offset,0),new THREE.Vector3(posN.x,offset,0),state.theme==='cyan'?0x59e8f5:state.theme==='violet'?0xb18aff:0xff5d9e,.018);atomRoot.add(bond);atomRoot.userData.bonds.push(bond)}}
+function buildAtom(){atomScene=new THREE.Scene();atomCamera=new THREE.PerspectiveCamera(45,1,.1,100);atomCamera.position.set(0,.1,4.6);atomRoot=createMolecularRoot(atomScene);atomRoot.userData.electrons=[];atomRoot.userData.orbits=[];atomRoot.userData.atoms=[];const a=addAtom(atomRoot,new THREE.Vector3(-.75,0,0),.35,0xff5d9e,'A');const n=addAtom(atomRoot,new THREE.Vector3(.75,0,0),.35,0x59e8f5,'N');atomRoot.userData.atoms.push(a,n);const nucleusBond=makeBond(a.position,n.position,0xa68bff,.025);atomRoot.add(nucleusBond);atomRoot.userData.bonds=[nucleusBond];for(let i=0;i<3;i++)atomRoot.userData.orbits.push(addOrbit(atomRoot,1.05+i*.24,[0x59e8f5,0xa68bff,0xff5d9e][i],i*.7));atomScene.add(new THREE.AmbientLight(0xa8baff,1.4));const l=new THREE.PointLight(0x65e6ff,20,10);l.position.set(2,2,3);atomScene.add(l);rendererAtom=makeRenderer('atomViewport');buildAtomElectrons();}
+function buildAtomElectrons(){if(!atomRoot)return;atomRoot.userData.electrons.forEach(e=>{atomRoot.remove(e.mesh);e.mesh.geometry.dispose();e.mesh.material.dispose()});atomRoot.userData.electrons=[];for(let i=0;i<state.electrons;i++){const mesh=new THREE.Mesh(new THREE.SphereGeometry(.042,8,6),new THREE.MeshBasicMaterial({color:i%2?0x59e8f5:0xffa5d0}));atomRoot.add(mesh);atomRoot.userData.electrons.push({mesh,phase:i/state.electrons*Math.PI*2,ring:i%3});}updateLabels();}
+function updateLabels(){if(!atomRoot)return;atomRoot.userData.atoms.forEach(a=>{if(a.userData.label)a.userData.label.visible=state.labels});}
+function buildReaction(){reactionScene=new THREE.Scene();reactionCamera=new THREE.PerspectiveCamera(45,1,.1,100);reactionCamera.position.set(0,0,5);reactionRoot=createMolecularRoot(reactionScene);reactionRoot.userData.atoms=[];reactionRoot.userData.bonds=[];reactionRoot.userData.particles=[];reactionRoot.userData.a=addAtom(reactionRoot,new THREE.Vector3(-1.25,0,0),.31,0xff5d9e,'A');reactionRoot.userData.n=addAtom(reactionRoot,new THREE.Vector3(1.25,0,0),.31,0x59e8f5,'N');reactionRoot.userData.atoms.push(reactionRoot.userData.a,reactionRoot.userData.n);const bond=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,1,8),new THREE.MeshStandardMaterial({color:0xa68bff,emissive:0xa68bff,emissiveIntensity:.5,metalness:.4,roughness:.3}));bond.visible=false;reactionRoot.add(bond);reactionRoot.userData.bonds.push(bond);reactionScene.add(new THREE.AmbientLight(0x9eafff,1.4));rendererReaction=makeRenderer('reactionViewport');}
+function initControls(host,root,camera,kind){let drag=null,lastX=0,lastY=0,pinch=0;host.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;drag={x:e.clientX,y:e.clientY};lastX=e.clientX;lastY=e.clientY;host.setPointerCapture?.(e.pointerId);});host.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-lastX,dy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;if(kind==='main'){mainControls.rotY+=dx*.008;mainControls.rotX=Math.max(-1.2,Math.min(1.2,mainControls.rotX+dy*.006));root.rotation.y=mainControls.rotY;root.rotation.x=mainControls.rotX}else{root.rotation.y+=dx*.008;root.rotation.x=Math.max(-1.1,Math.min(1.1,root.rotation.x+dy*.006))}});const end=()=>drag=null;host.addEventListener('pointerup',end);host.addEventListener('pointercancel',end);host.addEventListener('wheel',e=>{e.preventDefault();const factor=Math.exp(e.deltaY*.001);camera.position.z=Math.max(2.5,Math.min(10,camera.position.z*factor));},{passive:false});}
+function setRendererSize(r,c,hostId){const host=$(hostId);if(!host||!r)return;const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);c.aspect=w/h;c.updateProjectionMatrix();r.setSize(w,h,false);}
+function resetMainCamera(){mainControls.rotX=.15;mainControls.rotY=.3;mainCamera.position.set(0,.4,6.6);mainRoot.rotation.set(.15,.3,0);toast('Camera view reset');}
+$('resetCamera').addEventListener('click',resetMainCamera);$('toggleSpin').addEventListener('click',()=>{state.spinning=!state.spinning;$('toggleSpin').textContent=state.spinning?'Pause spin':'Resume spin';});
+function colorTheme(){const colors=state.theme==='cyan'?[0x59e8f5,0xa1f8d8,0x619cff]:state.theme==='violet'?[0xb18aff,0x62dcff,0xff7fcb]:state.theme==='minimal'?[0xe8edf8,0xa5b7d7,0xb8c0d8]:[0xff5d9e,0x59e8f5,0xa68bff];return colors;}
+function updateTheme3D(){const colors=colorTheme();if(mainRoot){mainRoot.userData.atoms.forEach((a,i)=>{const m=a.children[0].material;m.color.setHex(colors[i%colors.length]);m.emissive.setHex(colors[i%colors.length]);if(a.userData.label?.material?.map){/* label sprite remains legible */}});mainRoot.userData.orbits.forEach((o,i)=>{o.ring.material.color.setHex(colors[i%colors.length]);o.electron.material.color.setHex(colors[(i+1)%colors.length])});const dust=mainRoot.getObjectByName('dust');if(dust)dust.material.color.setHex(colors[1]);}if(atomRoot){atomRoot.userData.atoms.forEach((a,i)=>{a.children[0].material.color.setHex(colors[i%colors.length]);a.children[0].material.emissive.setHex(colors[i%colors.length])});atomRoot.userData.orbits.forEach((o,i)=>o.ring.material.color.setHex(colors[i%colors.length]));}if(reactionRoot){reactionRoot.userData.atoms.forEach((a,i)=>{a.children[0].material.color.setHex(colors[i%colors.length]);a.children[0].material.emissive.setHex(colors[i%colors.length])})}}
+function updateHud(){if(!mainRoot)return;const a=mainRoot.userData.atoms[0].position,n=mainRoot.userData.atoms[1].position;$('coordA').textContent=a.x.toFixed(2)+', '+a.y.toFixed(2);$('coordN').textContent=n.x.toFixed(2)+', '+n.y.toFixed(2);$('bondDistance').textContent=a.distanceTo(n).toFixed(2)+' Å*';}
+function updateReactionVisual(){if(!reactionRoot)return;const p=state.reaction/100;const a=reactionRoot.userData.a,n=reactionRoot.userData.n;const target=.32;const spread=1.25*(1-p)+target*p;a.position.x=-spread;n.position.x=spread;const bond=reactionRoot.userData.bonds[0];const delta=new THREE.Vector3().subVectors(n.position,a.position);bond.position.copy(a.position).add(n.position).multiplyScalar(.5);bond.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.clone().normalize());bond.scale.y=delta.length();bond.visible=p>.03;bond.material.color.setHex(state.stressed?0xff5d9e:0xa68bff);bond.material.emissive.setHex(state.stressed?0xff5d9e:0xa68bff)}
+window.setReactionVisual=(progress,stressed)=>{if(!reactionRoot)return;state.stressed=stressed;updateReactionVisual()};
+window.reactionFx=()=>{if(!mainRoot)return;mainRoot.userData.pulse=3;};
+window.saveMolecularSnapshot=()=>{try{if(rendererMain){rendererMain.render(mainScene,mainCamera);const a=document.createElement('a');a.href=rendererMain.domElement.toDataURL('image/png');a.download='ariyan-nabila-molecular-snapshot.png';a.click();toast('Molecular snapshot saved')}else toast('3D renderer is still starting')}catch{toast('Snapshot unavailable in this browser')}};
+function animate(t){requestAnimationFrame(animate);const time=(t||0)*.001;const reduce=state.reduced;const rate=reduce?0.15:state.speed;if(mainRoot){if(state.spinning&&!reduce){mainRoot.rotation.y=mainControls.rotY+time*.08;mainRoot.rotation.x=mainControls.rotX+Math.sin(time*.25)*.025}mainRoot.userData.orbits.forEach((o,i)=>{o.electron.position.set(Math.cos(time*rate*(.7+i*.18)+o.phase)*o.radius,Math.sin(time*rate*(.7+i*.18)+o.phase)*o.radius*.38,Math.sin(time*rate*(.7+i*.18)+o.phase)*.24)});const dust=mainRoot.getObjectByName('dust');if(dust&&!reduce)dust.rotation.y=time*.012;rendererMain?.render(mainScene,mainCamera);if(mainRoot.userData.pulse){mainRoot.scale.setScalar(1+Math.sin(time*14)*.018);mainRoot.userData.pulse-=.035;if(mainRoot.userData.pulse<=0){mainRoot.scale.setScalar(1);mainRoot.userData.pulse=0}}}
+if(atomRoot){atomRoot.userData.orbits.forEach((o,i)=>{o.electron.position.set(Math.cos(time*rate*(.7+i*.2)+o.phase)*o.radius,Math.sin(time*rate*(.7+i*.2)+o.phase)*o.radius*.45,Math.sin(time*rate*(.7+i*.2)+o.phase)*.2)});atomRoot.userData.electrons.forEach((e,i)=>{const o=atomRoot.userData.orbits[e.ring];const ph=e.phase+time*rate*(.7+e.ring*.2);e.mesh.position.set(Math.cos(ph)*o.radius,Math.sin(ph)*o.radius*.45,Math.sin(ph)*.22)});rendererAtom?.render(atomScene,atomCamera)}
+if(reactionRoot){updateReactionVisual();rendererReaction?.render(reactionScene,reactionCamera)}updateHud();}
+function init3D(){try{buildMain();buildAtom();buildReaction();initControls($('mainViewport'),mainRoot,mainCamera,'main');initControls($('atomViewport'),atomRoot,atomCamera,'atom');initControls($('reactionViewport'),reactionRoot,reactionCamera,'reaction');applyQuality();updateTheme3D();const resize=()=>{setRendererSize(rendererMain,mainCamera,'mainViewport');setRendererSize(rendererAtom,atomCamera,'atomViewport');setRendererSize(rendererReaction,reactionCamera,'reactionViewport')};window.addEventListener('resize',resize,{passive:true});if('ResizeObserver'in window){const ro=new ResizeObserver(resize);['mainViewport','atomViewport','reactionViewport'].forEach(id=>ro.observe($(id)))}animate(0);$('systemStatus').textContent='3D ENGINE ONLINE';}catch(err){console.error(err);$('systemStatus').textContent='3D FALLBACK MODE';toast('3D initialization failed. Check network access to the Three.js CDN.');}}
+document.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>{setTimeout(updateTheme3D,0)}));
+init3D();
+</script>
+<script>
+(function(){
+var els=[].slice.call(document.querySelectorAll('.panel,.section-title'));
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.06,rootMargin:'0px 0px -6% 0px'});els.forEach(function(p,i){p.style.transitionDelay=(i%2?90:0)+'ms';io.observe(p)})}else els.forEach(function(p){p.classList.add('in')});
+setTimeout(function(){els.forEach(function(p){p.classList.add('in')})},6000);
+var names=[['s0','00 · INTRO'],['s1','01 · LAB WORKSPACE'],['s2','02 · REACTIONS & DISCOVERY']];
+var pill=document.getElementById('chapterPill'),bar=document.getElementById('progBar'),tick=false;
+function upd(){tick=false;var h=document.documentElement.scrollHeight-innerHeight;bar.style.width=(h>0?scrollY/h*100:0)+'%';var cur=names[0][1];names.forEach(function(n){var e=document.getElementById(n[0]);if(e&&e.getBoundingClientRect().top<innerHeight*.45)cur=n[1]});if(pill.textContent!==cur)pill.textContent=cur}
+addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(upd)}},{passive:true});upd();
+})();
+</script>
+<script type="module">
+import * as THREE from 'three';
+(function(){
+const cv=document.getElementById('bgCanvas');
+try{
+const mobile=matchMedia('(max-width:760px)').matches;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const r=new THREE.WebGLRenderer({canvas:cv,antialias:!mobile,alpha:true,powerPreference:'low-power'});
+r.setPixelRatio(Math.min(devicePixelRatio||1,mobile?1:1.25));
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(60,1,.1,120);cam.position.set(0,0,9);
+const group=new THREE.Group();scene.add(group);
+const rnd=(a,b)=>Math.random()*(b-a)+a;
+const RY=26,N=mobile?70:130;
+const pos=new Float32Array(N*3),P=[];
+for(let i=0;i<N;i++){const x=rnd(-11,11),y=rnd(-RY,RY),z=rnd(-9,4);P.push([x,y,z]);pos.set([x,y,z],i*3)}
+const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+const pm=new THREE.PointsMaterial({size:mobile?.16:.13,transparent:true,opacity:.9,depthWrite:false,sizeAttenuation:true});
+group.add(new THREE.Points(pg,pm));
+const lp=[];for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){const a=P[i],b=P[j];if(Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2])<4.2)lp.push(...a,...b)}
+const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(lp),3));
+const lm=new THREE.LineBasicMaterial({transparent:true,opacity:.22});group.add(new THREE.LineSegments(lg,lm));
+const shapes=[],geos=[new THREE.IcosahedronGeometry(1.6,1),new THREE.TorusGeometry(1.4,.38,10,26),new THREE.OctahedronGeometry(1.5),new THREE.TorusKnotGeometry(1,.28,70,10),new THREE.IcosahedronGeometry(1.2,0),new THREE.TorusGeometry(1.2,.3,10,24)];
+geos.forEach((g,i)=>{const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({wireframe:true,transparent:true,opacity:.32}));const side=i%2?1:-1;m.position.set(side*rnd(5,8),-RY+(i+.5)*(2*RY/geos.length),rnd(-6,-1));group.add(m);shapes.push(m)});
+function paint(){const s=getComputedStyle(document.body);const c=['--accent','--accent2','--accent3'].map(k=>new THREE.Color(s.getPropertyValue(k).trim()||'#ff5d9e'));pm.color.copy(c[1]);lm.color.copy(c[2]);shapes.forEach((m,i)=>m.material.color.copy(c[i%3]))}
+paint();
+document.querySelectorAll('[data-theme-choice]').forEach(b=>b.addEventListener('click',()=>setTimeout(paint,30)));
+function size(){r.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+size();addEventListener('resize',size,{passive:true});
+let prog=0,target=0;
+function onScroll(){const h=document.documentElement.scrollHeight-innerHeight;target=h>0?scrollY/h:0}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+const clock=new THREE.Clock();
+function frame(){requestAnimationFrame(frame);if(document.hidden)return;const t=clock.getElapsedTime();prog+=(target-prog)*.06;
+cam.position.y=(RY-4)-prog*2*(RY-4);cam.position.x=Math.sin(prog*Math.PI*2)*1.6;cam.lookAt(0,cam.position.y-1,0);
+if(!reduce){group.rotation.y=t*.04+prog*1.2;shapes.forEach((m,i)=>{m.rotation.x=t*.18*(i%2?1:-1)+i;m.rotation.y=t*.22+i})}
+r.render(scene,cam)}
+frame();
+}catch(e){console.warn('bg 3D failed',e)}
+})();
+</script>
 </body>
 </html>
