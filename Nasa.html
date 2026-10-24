@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0b">
+  <title>NexusXModder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0a0a0b;
+      --s1: #131315;
+      --s2: #1a1a1d;
+      --s3: #222226;
+      --line: #2a2a2f;
+      --iv: #f4f4f5;
+      --mute: #9a9aa3;
+      --gold: #4f8cff;
+      --gold2: #2f6fe0;
+      --rose: #4f8cff;
+      --gr: #4f8cff;
+      --serif: 'Inter', system-ui, sans-serif;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--ink);
+      color: var(--iv);
+      font-family: var(--sans);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .gold {
+      color: var(--iv);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: -180px;
+      left: 50%;
+      width: 720px;
+      height: 460px;
+      max-width: 100vw;
+      transform: translateX(-50%);
+      background: radial-gradient(closest-side, rgba(79, 140, 255, .3), transparent);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between !important;
+      padding: 10px 12px 10px 10px !important;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .05));
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 999px;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 -1px 0 rgba(255, 255, 255, .05);
+      width: min(920px, 94vw) !important;
+      max-width: none !important;
+      gap: 0 !important;
+    }
+
+    .brand {
+      font-family: var(--serif);
+      font-size: 28px !important;
+      font-weight: 800 !important;
+      letter-spacing: .2em !important;
+      text-decoration: none;
+      display: inline-flex !important;
+      align-items: center;
+      gap: 20px !important;
+      padding: 2px 12px 2px 2px !important;
+      margin: 0 !important;
+      color: #fff !important;
+      background: 0 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      transition: .2s;
+    }
+
+    .brand .logo {
+      width: 64px !important;
+      height: 64px !important;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: none;
+      border: 2px solid rgba(255, 255, 255, .85) !important;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, .12), 0 4px 14px rgba(0, 0, 0, .5);
+      background: #1a1a1d;
+    }
+
+    .logo.ph {
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: 0;
+      background: #26262b;
+      color: #fff;
+    }
+
+    nav a.l {
+      color: var(--mute);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    nav a.l:hover {
+      color: var(--iv);
+    }
+
+    .btn {
+      background: var(--s2);
+      border: 1px solid var(--line);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      transition: .2s;
+      color: var(--iv);
+    }
+
+    .btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn.pri {
+      background: var(--gr);
+      color: #fff;
+      border: 0;
+    }
+
+    .btn.pri:hover {
+      filter: brightness(1.1);
+      color: #fff;
+    }
+
+    /* Saved Button */
+    .save-btn {
+      width: 64px !important;
+      height: 64px !important;
+      min-width: 64px !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      display: grid !important;
+      place-items: center;
+      gap: 0 !important;
+      border: 2px solid rgba(255, 255, 255, .85) !important;
+      background: rgba(255, 255, 255, .1) !important;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, .12), 0 4px 14px rgba(0, 0, 0, .5) !important;
+      transition: transform .15s, background .2s;
+      position: relative;
+    }
+
+    .save-btn:hover {
+      background: rgba(255, 255, 255, .2) !important;
+      border-color: #fff !important;
+    }
+
+    .save-btn:active {
+      transform: scale(.94);
+    }
+
+    .save-btn span {
+      display: none !important;
+    }
+
+    .save-btn svg {
+      grid-area: 1/1;
+      width: 30px !important;
+      height: 30px !important;
+      stroke-width: 1.7;
+      fill: none;
+      stroke: #fff;
+      stroke-linejoin: round;
+      display: block !important;
+    }
+
+    .save-btn.has svg {
+      fill: #fff;
+    }
+
+    .save-btn b {
+      grid-area: 1/1;
+      display: block !important;
+      margin-top: -3px;
+      padding: 0 !important;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 1;
+      color: #0a0a0b !important;
+      z-index: 1;
+      background: 0 0 !important;
+      box-shadow: none !important;
+    }
+
+    .save-btn b[hidden] {
+      display: none !important;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 150px 5vw 0;
+      max-width: 1500px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 48px;
+      align-items: center;
+      padding-bottom: 0;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-weight: 800;
+      font-size: clamp(40px, 6vw, 84px);
+      line-height: 1.02;
+      letter-spacing: -.035em;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .hero p.sub {
+      color: var(--mute);
+      max-width: 480px;
+      margin: 22px 0 28px;
+      font-size: 17px;
+    }
+
+    .hs {
+      display: flex;
+      max-width: 560px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 999px;
+      padding: 6px;
+      -webkit-backdrop-filter: blur(16px) saturate(165%);
+      backdrop-filter: blur(16px) saturate(165%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2);
+    }
+
+    .hs input {
+      flex: 1;
+      background: 0 0;
+      border: 0;
+      padding: 12px 20px;
+      outline: 0;
+      min-width: 0;
+    }
+
+    .hs input::placeholder {
+      color: #b4b4bd;
+    }
+
+    .hs button {
+      border: 0;
+      border-radius: 999px;
+      padding: 0 28px;
+      font-weight: 700;
+      background: #4f8cff;
+      color: #fff;
+    }
+
+    /* Main & Controls */
+    main {
+      max-width: 1500px;
+      margin: auto;
+      padding: 14px 5vw 60px;
+    }
+
+    .tools {
+      position: sticky;
+      top: 76px !important;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 12px 0 !important;
+      background: 0 0 !important;
+    }
+
+    .seg {
+      display: flex;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 999px;
+      padding: 3px;
+      -webkit-backdrop-filter: blur(16px) saturate(165%);
+      backdrop-filter: blur(16px) saturate(165%);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2);
+    }
+
+    .seg button {
+      background: 0 0;
+      border: 0;
+      padding: 7px 16px;
+      border-radius: 999px;
+      color: #c4c4cc;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .seg button.on {
+      background: #4f8cff;
+      color: #fff;
+    }
+
+    /* Media Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 26px 18px;
+      scroll-margin-top: 150px;
+    }
+
+    .card {
+      margin: 0;
+      background: 0 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      cursor: pointer;
+      position: relative;
+      transition: border-color .2s;
+    }
+
+    .card:hover {
+      background: 0 0;
+      transform: none;
+    }
+
+    .card .im {
+      aspect-ratio: 16/9;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--s2);
+      position: relative;
+    }
+
+    .card img {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      object-fit: cover;
+      display: block;
+      background: var(--s2);
+      transition: none !important;
+    }
+
+    .card:hover img {
+      transform: none !important;
+    }
+
+    .card .pl {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: #0006;
+    }
+
+    .card .pl i {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #0a0a0bcc;
+      border: 1px solid var(--gold);
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      font-style: normal;
+      padding-left: 4px;
+    }
+
+    .card .m {
+      padding: 10px 2px 0;
+      background: 0 0;
+      border: 0;
+    }
+
+    .card h3 {
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.3;
+      font-weight: 600;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card small {
+      color: var(--mute);
+      font-size: 13px;
+    }
+
+    .bd {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #0a0a0bcc;
+      border: 1px solid #4f8cff66;
+      color: var(--gold);
+      padding: 1px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 2;
+    }
+
+    .fv {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      background: rgba(10, 10, 14, .55);
+      border: 1px solid rgba(255, 255, 255, .35);
+      color: #fff;
+      transition: .2s;
+    }
+
+    #mF svg,
+    .fv svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linejoin: round;
+    }
+
+    .fv.on {
+      background: #4f8cff;
+      border-color: #fff;
+      color: #fff;
+    }
+
+    #mF.on svg,
+    .fv.on svg {
+      fill: #fff;
+    }
+
+    #mF {
+      gap: 8px;
+    }
+
+    #mF.on {
+      background: #4f8cff;
+      border-color: #4f8cff;
+      color: #fff;
+    }
+
+    .card .aud {
+      height: auto;
+      aspect-ratio: 16/9;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: var(--s2);
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 28px;
+    }
+
+    .skel {
+      height: auto;
+      aspect-ratio: 16/9;
+      margin: 0;
+      border-radius: 14px;
+      background: linear-gradient(90deg, var(--s1) 25%, var(--s2) 50%, var(--s1) 75%);
+      background-size: 200% 100%;
+      animation: sh 1.4s infinite;
+    }
+
+    @keyframes sh {
+      to {
+        background-position: -200% 0;
+      }
+    }
+
+    .empty {
+      color: var(--mute);
+      text-align: center;
+      padding: 60px 0;
+      grid-column: 1 / -1;
+    }
+
+    #sent {
+      height: 1px;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: #040408f5;
+      display: none;
+      overflow: auto;
+      padding: 22px 4vw;
+    }
+
+    .modal.open {
+      display: block;
+    }
+
+    .box {
+      max-width: 1240px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .left {
+      min-width: 0;
+    }
+
+    .left,
+    .side {
+      background: var(--s1);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .stage {
+      background: #000;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      place-items: center;
+      min-height: 300px;
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .stage > img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .info {
+      padding: 22px 26px;
+    }
+
+    .info h2 {
+      font-family: var(--serif);
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 600;
+    }
+
+    .info .mt {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 600;
+      margin: 6px 0 10px;
+    }
+
+    .info p {
+      color: #c9c3d4;
+      font-size: 15px;
+      white-space: pre-line;
+      max-height: 150px;
+      overflow: auto;
+    }
+
+    .kw span {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 11px;
+      margin: 10px 6px 0 0;
+      font-size: 12px;
+      color: var(--mute);
+    }
+
+    .side {
+      padding: 24px;
+      align-self: start;
+      position: sticky;
+      top: 0;
+    }
+
+    .side h4 {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .side .hint {
+      color: var(--mute);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .dl {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--s2);
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dl.best {
+      border-color: var(--gold);
+    }
+
+    .dl .bar {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 3px;
+      width: 0;
+      background: var(--gr);
+    }
+
+    .dl .n {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dl .n b {
+      display: block;
+      font-size: 15px;
+    }
+
+    .dl .n small {
+      color: var(--mute);
+      font-size: 12px;
+    }
+
+    .dl .tg {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--gr);
+      padding: 1px 8px;
+      border-radius: 999px;
+      margin-left: 6px;
+    }
+
+    .dl button {
+      background: var(--gr);
+      border: 0;
+      color: #fff;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      min-width: 92px;
+    }
+
+    .dl.on-play {
+      background: var(--s3);
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .ar,
+    .x {
+      position: fixed;
+      z-index: 70;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #000c;
+      border: 1px solid var(--line);
+      font-size: 20px;
+      display: grid;
+      place-items: center;
+    }
+
+    .x {
+      top: 16px;
+      right: 18px;
+    }
+
+    .ar {
+      top: 50%;
+    }
+
+    .ar.l {
+      left: 8px;
+    }
+
+    .ar.r {
+      right: 8px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gr);
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-weight: 700;
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: .3s;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Player */
+    .pl8 {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      background: #000;
+      aspect-ratio: 16/9;
+      display: block;
+      user-select: none;
+    }
+
+    .pl8.aud {
+      background: #141416;
+    }
+
+    .pl8 video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #000;
+    }
+
+    .pl8 .big {
+      position: absolute;
+      inset: 0 0 60px;
+      display: grid;
+      place-items: center;
+      background: 0 0;
+      border: 0;
+    }
+
+    .pl8 .big i {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: #0a0a0bb0;
+      border: 1.5px solid var(--gold);
+      color: var(--gold);
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      font-style: normal;
+      padding-left: 6px;
+      transition: .25s;
+    }
+
+    .pl8.play .big i {
+      opacity: 0;
+      transform: scale(1.4);
+    }
+
+    .eq {
+      position: absolute;
+      inset: 0 0 70px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      padding-bottom: 18%;
+      pointer-events: none;
+    }
+
+    .eq b {
+      width: 8px;
+      height: 20%;
+      border-radius: 4px;
+      background: var(--gr);
+      animation: eq 1s ease-in-out infinite;
+      animation-play-state: paused;
+    }
+
+    .pl8.play .eq b {
+      animation-play-state: running;
+    }
+
+    .eq b:nth-child(2n) {
+      animation-delay: -.4s;
+    }
+
+    .eq b:nth-child(3n) {
+      animation-delay: -.7s;
+      height: 45%;
+    }
+
+    .eq b:nth-child(5n) {
+      animation-delay: -.2s;
+    }
+
+    @keyframes eq {
+      50% {
+        height: 90%;
+      }
+    }
+
+    .ctl {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 34px 16px 12px;
+      background: linear-gradient(transparent, #000d);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: .3s;
+    }
+
+    .pl8.play.idle .ctl {
+      opacity: 0;
+    }
+
+    .pl8.play.idle {
+      cursor: none;
+    }
+
+    .seek {
+      --h: 4px;
+      position: relative;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .seek .tr {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background: #ffffff30;
+      transition: none;
+    }
+
+    .seek .bf,
+    .seek .pg,
+    .seek .tr {
+      height: var(--h) !important;
+      top: 50%;
+      margin-top: calc(var(--h) / -2);
+      border-radius: 99px;
+    }
+
+    .seek .bf {
+      position: absolute;
+      left: 0;
+      background: #ffffff40;
+    }
+
+    .seek .pg {
+      position: absolute;
+      left: 0;
+      background: var(--gr);
+    }
+
+    .seek .th {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--gold);
+      transform: translateX(-50%) scale(0);
+      transition: .15s;
+      top: 50%;
+      margin-top: -7px;
+      box-shadow: 0 0 10px #4f8cff88;
+    }
+
+    @media (hover: hover) {
+      .seek:hover {
+        --h: 6px;
+      }
+      .seek:hover .th {
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    .cr {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cr button {
+      background: 0 0;
+      border: 0;
+      color: var(--iv);
+      font-size: 15px;
+      min-width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      opacity: .9;
+    }
+
+    .cr button:hover {
+      color: var(--gold);
+      background: #ffffff14;
+    }
+
+    .cr .tm {
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      color: #d8d2c4;
+      margin: 0 8px;
+      white-space: nowrap;
+    }
+
+    .cr .sp {
+      flex: 1;
+    }
+
+    .vol {
+      width: 70px;
+      accent-color: var(--gold);
+      height: 4px;
+    }
+
+    .cr .sb {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Media Queries */
+    @media (max-width: 1000px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+        padding-top: 120px;
+      }
+
+      .box {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .ar {
+        display: none;
+      }
+
+      .side {
+        position: static;
+        align-self: stretch;
+        width: 100%;
+      }
+
+      .vol {
+        display: none;
+      }
+    }
+
+    @media (min-width: 701px) and (max-width: 1000px) {
+      .hero {
+        padding-top: 110px;
+      }
+
+      .stage > img {
+        max-height: 60vh;
+      }
+    }
+
+    @media (max-width: 700px) {
+      main {
+        padding: 8px 14px 40px;
+      }
+
+      input,
+      select {
+        font-size: 16px !important;
+      }
+
+      nav {
+        top: max(8px, env(safe-area-inset-top));
+        padding: 6px 6px 6px 6px !important;
+        gap: 0 !important;
+        width: calc(100% - 20px) !important;
+      }
+
+      .brand {
+        font-size: 19px !important;
+        letter-spacing: .12em !important;
+        gap: 12px !important;
+        padding: 2px 8px 2px 2px !important;
+      }
+
+      .brand .logo {
+        width: 52px !important;
+        height: 52px !important;
+      }
+
+      .logo.ph {
+        font-size: 15px;
+      }
+
+      .save-btn {
+        width: 52px !important;
+        height: 52px !important;
+        min-width: 52px !important;
+        padding: 0 !important;
+      }
+
+      .save-btn svg {
+        width: 26px !important;
+        height: 26px !important;
+      }
+
+      .save-btn b {
+        font-size: 11px;
+        margin-top: -2px;
+      }
+
+      .hero {
+        padding: 96px 18px 0 !important;
+        gap: 26px;
+      }
+
+      .hero h1 {
+        font-size: clamp(38px, 12vw, 56px);
+        line-height: 1;
+      }
+
+      .hero p.sub {
+        font-size: 15px;
+        margin: 14px 0 20px;
+      }
+
+      .hs {
+        padding: 4px;
+      }
+
+      .hs input {
+        padding: 11px 16px;
+      }
+
+      .hs button {
+        padding: 0 20px;
+      }
+
+      .tools {
+        top: 60px !important;
+        gap: 8px;
+        padding: 10px 0 !important;
+      }
+
+      .seg {
+        flex: 1 1 100%;
+      }
+
+      .seg button {
+        flex: 1;
+        padding: 8px 4px;
+      }
+
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 22px;
+        columns: auto;
+      }
+
+      .card {
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .card .m {
+        padding: 10px 2px 0;
+      }
+
+      .card h3 {
+        font-size: 16px;
+      }
+
+      .card .pl i {
+        width: 52px;
+        height: 52px;
+      }
+
+      .skel {
+        aspect-ratio: 16/9;
+        height: auto;
+      }
+
+      .modal {
+        padding: 0;
+      }
+
+      .box {
+        gap: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .left,
+      .side {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+      }
+
+      .left {
+        border-top: 0;
+      }
+
+      .stage {
+        min-height: 220px;
+      }
+
+      .stage > img {
+        max-height: 56vh;
+      }
+
+      .info {
+        padding: 18px;
+      }
+
+      .info h2 {
+        font-size: 23px;
+      }
+
+      .info p {
+        max-height: none;
+        overflow: visible;
+        font-size: 14px;
+      }
+
+      .side {
+        width: 100%;
+        align-self: stretch;
+        padding: 18px 18px calc(24px + env(safe-area-inset-bottom));
+      }
+
+      .dl {
+        padding: 14px;
+        gap: 10px;
+      }
+
+      .dl button {
+        padding: 11px 16px;
+        min-width: 96px;
+      }
+
+      .row .btn {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .x {
+        top: max(10px, env(safe-area-inset-top));
+        right: 10px;
+        width: 40px;
+        height: 40px;
+      }
+
+      .pl8 {
+        aspect-ratio: 16/9;
+      }
+
+      .pl8 .big {
+        inset: 0 0 54px;
+      }
+
+      .pl8 .big i {
+        width: 62px;
+        height: 62px;
+        font-size: 22px;
+      }
+
+      .ctl {
+        padding: 26px 10px 8px;
+        gap: 2px;
+      }
+
+      .seek {
+        --h: 5px;
+        height: 28px;
+      }
+
+      .cr {
+        gap: 0;
+      }
+
+      .cr button {
+        min-width: 38px;
+        height: 38px;
+        font-size: 14px;
+      }
+
+      .cr .tm {
+        font-size: 12px;
+        margin: 0 6px;
+      }
+
+      .cr .mu,
+      .cr .pip,
+      .vol {
+        display: none;
+      }
+
+      .toast {
+        bottom: calc(20px + env(safe-area-inset-bottom));
+        max-width: 90vw;
+        text-align: center;
+      }
+    }
+
+    @media (hover: none) {
+      .seek .th {
+        transform: translateX(-50%) scale(1);
+      }
+      .card:hover {
+        transform: none;
+      }
+      .card:hover img {
+        transform: none;
+      }
+      .pl8.play.idle .ctl {
+        opacity: 1;
+      }
+      .pl8.play.idle {
+        cursor: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="brand" href="#top">
+      <img
+        class="logo"
+        src="https://i.imgur.com/tMNAf8N.jpeg"
+        alt=""
+        referrerpolicy="no-referrer"
+        onerror="this.replaceWith(Object.assign(document.createElement('span'), { className: 'logo ph', textContent: 'GD' }))"
+      >
+      NexusXModder
+    </a>
+    <button class="save-btn" id="favBtn" aria-label="Saved videos">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4.2L6 21V4.5a1 1 0 0 1 1-1z"/>
+      </svg>
+      <span>Saved</span>
+      <b id="fc" hidden>0</b>
+    </button>
+  </nav>
+
+  <header class="hero" id="top">
+    <div>
+      <h1>Every frame of <em class="gold">space,</em> in your hands.</h1>
+      <p class="sub">Search NASA’s archive of photographs, mission films and audio. Watch in a cinematic player, then download in the exact quality you want.</p>
+      <form class="hs" id="sf">
+        <input id="q" type="search" placeholder="Enter your topic" aria-label="Search">
+        <button>Search</button>
+      </form>
+    </div>
+  </header>
+
+  <main>
+    <div class="tools">
+      <div class="seg" id="seg">
+        <button data-t="video" class="on">Videos</button>
+        <button data-t="image">Photos</button>
+        <button data-t="audio">Audio</button>
+        <button data-t="video,image,audio">All</button>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div id="sent"></div>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <button class="x" id="mx" aria-label="Close">✕</button>
+    <button class="ar l" id="mp" aria-label="Previous">‹</button>
+    <button class="ar r" id="mn" aria-label="Next">›</button>
+    <div class="box">
+      <div class="left">
+        <div class="stage" id="stage"></div>
+        <div class="info">
+          <h2 id="mT"></h2>
+          <div class="mt" id="mM"></div>
+          <p id="mD"></p>
+          <div class="kw" id="mK"></div>
+        </div>
+      </div>
+      <aside class="side">
+        <h4>Download</h4>
+        <p class="hint" id="mH">Choose a quality. A progress bar shows the transfer.</p>
+        <div id="mO"></div>
+        <div class="row">
+          <button class="btn" id="mF">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4.2L6 21V4.5a1 1 0 0 1 1-1z"/>
+            </svg>
+            <span>Save</span>
+          </button>
+          <button class="btn" id="mC">Copy link</button>
+          <a class="btn" id="mL" target="_blank" rel="noopener">NASA page ↗</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const t = t => document.querySelector(t);
+    const e = "https://images-api.nasa.gov";
+    const n = ["apollo", "space station", "mars", "rocket launch", "hubble", "earth", "moon", "astronaut"];
+    const a = {
+      q: "moon",
+      types: "video",
+      yr: "",
+      sort: "",
+      page: 1,
+      items: [],
+      view: "x",
+      cur: -1,
+      files: []
+    };
+    let o = i("af", {});
+
+    function i(t, e) {
+      try {
+        return JSON.parse(localStorage.getItem(t)) || e;
+      } catch (t) {
+        return e;
+      }
+    }
+
+    function s(t, e) {
+      try {
+        localStorage.setItem(t, JSON.stringify(e));
+      } catch (t) {}
+    }
+
+    function l(e) {
+      const n = t("#toast");
+      n.textContent = e;
+      n.classList.add("show");
+      clearTimeout(n._h);
+      n._h = setTimeout(() => n.classList.remove("show"), 2200);
+    }
+
+    const c = t => String(t || "").replace(/[&<>"]/g, t => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;"
+    }[t]));
+
+    const r = {
+      image: "Photo",
+      video: "Video",
+      audio: "Audio"
+    };
+
+    const d = t => (
+      t > 1e9 ? (t / 1e9).toFixed(2) + " GB" :
+      t > 1e6 ? (t / 1e6).toFixed(1) + " MB" :
+      t > 1e3 ? Math.round(t / 1e3) + " KB" :
+      t + " B"
+    );
+
+    const u = t => {
+      if (!isFinite(t)) return "0:00";
+      return Math.floor(t / 60) + ":" + String(Math.floor(t % 60)).padStart(2, "0");
+    };
+
+    t("#seg").onclick = t => {
+      if (t.target.dataset.t) {
+        document.querySelectorAll("#seg button").forEach(e => e.classList.toggle("on", e === t.target));
+        a.types = t.target.dataset.t;
+        b();
+      }
+    };
+
+    t("#sf").onsubmit = t => {
+      t.preventDefault();
+      document.activeElement.blur();
+      b();
+    };
+
+    let m = !1;
+    let p = !1;
+    let g = null;
+    const f = '<div class="skel"></div>'.repeat(8);
+
+    const h = t => {
+      for (let e = t.length - 1; e > 0; e--) {
+        const n = Math.floor(Math.random() * (e + 1));
+        [t[e], t[n]] = [t[n], t[e]];
+      }
+      return t;
+    };
+
+    const v = t => t.collection.items
+      .filter(t => t.data && t.data[0])
+      .map(t => ({
+        d: t.data[0],
+        thumb: (t.links || []).find(t => t.rel === "preview")?.href || ""
+      }));
+
+    function b() {
+      a.view = "x";
+      a.tok = (a.tok || 0) + 1;
+      a.items = [];
+      a.page = 1;
+      p = !1;
+      m = !1;
+      g = null;
+      const e = t("#q").value.trim();
+      t("#grid").innerHTML = f;
+      if (e) {
+        a.q = e;
+        k();
+      } else {
+        g = {
+          pool: [],
+          left: null,
+          base: {
+            media_type: a.types,
+            year_start: 2026,
+            year_end: 2026
+          }
+        };
+        y();
+      }
+    }
+
+    async function y() {
+      if (m || !g) return;
+      m = !0;
+      const n = g;
+      const o = a.tok;
+      const i = t("#grid");
+
+      const s = async t => {
+        const a = await fetch(`${e}/search?` + new URLSearchParams({ ...n.base, ...t }));
+        if (!a.ok) throw 0;
+        return a.json();
+      };
+
+      try {
+        if (!n.left) {
+          let t;
+          try {
+            t = await s({ page_size: 1, page: 1 });
+          } catch (e) {
+            t = null;
+          }
+          if (!t || !t.collection.metadata.total_hits) {
+            n.base.q = "nasa";
+            t = await s({ page_size: 1, page: 1 });
+          }
+          const e = t.collection.metadata.total_hits || 0;
+          n.left = h(Array.from({ length: Math.max(1, Math.min(100, Math.ceil(e / 100))) }, (t, e) => e + 1));
+        }
+
+        while (n.pool.length < 24 && n.left.length) {
+          const t = await s({ page_size: 100, page: n.left.pop() });
+          if (o !== a.tok) return;
+          n.pool = n.pool.concat(h(v(t).filter(t => (t.d.date_created || "").startsWith("2026"))));
+        }
+
+        if (o !== a.tok) return;
+        a.items = a.items.concat(n.pool.splice(0, 24));
+        T();
+        if (!a.items.length) {
+          i.innerHTML = '<p class="empty">No 2026 videos found yet.</p>';
+        }
+        p = n.pool.length > 0 || n.left.length > 0;
+      } catch (t) {
+        if (o === a.tok && !a.items.length) {
+          i.innerHTML = '<p class="empty">Could not load. Check your connection.</p>';
+        }
+      }
+
+      m = !1;
+      setTimeout(w, 150);
+    }
+
+    async function k() {
+      if (m) return;
+      m = !0;
+      const n = t("#grid");
+      const o = a.page;
+      const i = a.tok;
+      const s = new URLSearchParams({
+        q: a.q,
+        media_type: a.types,
+        page: o,
+        page_size: 24
+      });
+
+      try {
+        const t = await fetch(`${e}/search?${s}`);
+        if (!t.ok) throw 0;
+        const o = await t.json();
+        if (i !== a.tok) return;
+        a.items = a.items.concat(v(o));
+        T();
+        if (!a.items.length) {
+          n.innerHTML = '<p class="empty">No results. Try another search.</p>';
+        }
+        p = (o.collection.links || []).some(t => t.rel === "next");
+      } catch (t) {
+        if (i === a.tok && o === 1) {
+          n.innerHTML = '<p class="empty">Could not load. Check your connection.</p>';
+        }
+      }
+
+      m = !1;
+      setTimeout(w, 150);
+    }
+
+    function w() {
+      if (p && !m && t("#sent").getBoundingClientRect().top < innerHeight + 900) {
+        if (g) {
+          y();
+        } else {
+          a.page++;
+          k();
+        }
+      }
+    }
+
+    function L(t, e) {
+      const n = t.d;
+      const a = n.media_type;
+      const i = o[n.nasa_id] ? "on" : "";
+      return `<article class="card" data-i="${e}">
+        <span class="bd">${r[a] || a}</span>
+        <button class="fv ${i}" data-id="${c(n.nasa_id)}" aria-label="Save">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4.2L6 21V4.5a1 1 0 0 1 1-1z"/>
+          </svg>
+        </button>
+        ${
+          t.thumb
+            ? `<div class="im">
+                <img loading="lazy" src="${c(t.thumb)}" alt="${c(n.title)}">
+                ${a !== "image" ? '<div class="pl"><i>▶</i></div>' : ''}
+              </div>`
+            : `<div class="aud">${r[a]}</div>`
+        }
+        <div class="m">
+          <h3>${c(n.title)}</h3>
+          <small>${c(n.center || "NASA")} · ${(n.date_created || "").slice(0, 4)}</small>
+        </div>
+      </article>`;
+    }
+
+    function T() {
+      t("#grid").innerHTML = a.items.map(L).join("");
+    }
+
+    function $(t, e, n, a, o) {
+      const i = e === "audio";
+      t.innerHTML = `
+        <div class="pl8 ${i ? "aud" : ""}" tabindex="0">
+          ${i ? `<audio src="${c(n)}" preload="metadata"></audio><div class="eq">${"<b></b>".repeat(14)}</div>` : `<video src="${c(n)}" poster="${c(a)}" playsinline preload="metadata"></video>`}
+          <button class="big" aria-label="Play"><i>▶</i></button>
+          <div class="ctl">
+            <div class="seek">
+              <div class="tr"></div>
+              <div class="bf"></div>
+              <div class="pg"></div>
+              <div class="th"></div>
+            </div>
+            <div class="cr">
+              <button class="pp" aria-label="Play/Pause">▶</button>
+              <button class="rw" title="Back 10s">⟲10</button>
+              <button class="fw" title="Forward 10s">10⟳</button>
+              <button class="mu" title="Mute">🔊</button>
+              <input class="vol" type="range" min="0" max="1" step=".05" value="1" aria-label="Volume">
+              <span class="tm">0:00 / 0:00</span>
+              <span class="sp"></span>
+              <button class="sb" title="Speed">1×</button>
+              ${i ? "" : '<button class="pip" title="Picture in picture">⧉</button><button class="fs" title="Fullscreen">⛶</button>'}
+            </div>
+          </div>
+        </div>
+      `;
+
+      const s = t.firstChild;
+      const r = s.querySelector(i ? "audio" : "video");
+      const d = selector => s.querySelector(selector);
+      let m;
+
+      const p = () => {
+        const t = r.duration || 0;
+        const e = r.currentTime;
+        d(".pg").style.width = d(".th").style.left = (t ? (e / t) * 100 : 0) + "%";
+        if (r.buffered.length && t) {
+          d(".bf").style.width = (r.buffered.end(r.buffered.length - 1) / t) * 100 + "%";
+        }
+        d(".tm").textContent = u(e) + " / " + u(t);
+      };
+
+      const g = () => (r.paused ? r.play() : r.pause());
+
+      r.onplay = r.onpause = () => {
+        s.classList.toggle("play", !r.paused);
+        d(".pp").textContent = r.paused ? "▶" : "❚❚";
+      };
+
+      r.ontimeupdate = r.onprogress = r.onloadedmetadata = p;
+
+      r.onended = () => {
+        s.classList.remove("play");
+        d(".pp").textContent = "▶";
+      };
+
+      r.onloadedmetadata = () => {
+        if (o) r.currentTime = o;
+        p();
+      };
+
+      d(".big").onclick = g;
+      d(".pp").onclick = g;
+      if (!i) r.onclick = g;
+
+      d(".rw").onclick = () => (r.currentTime -= 10);
+      d(".fw").onclick = () => (r.currentTime += 10);
+
+      d(".vol").oninput = t => {
+        r.volume = t.target.value;
+        r.muted = !1;
+        d(".mu").textContent = r.volume ? "🔊" : "🔇";
+      };
+
+      d(".mu").onclick = () => {
+        r.muted = !r.muted;
+        d(".mu").textContent = r.muted ? "🔇" : "🔊";
+      };
+
+      const f = [1, 1.25, 1.5, 2, 0.5, 0.75];
+      let h = 0;
+      d(".sb").onclick = () => {
+        h = (h + 1) % f.length;
+        r.playbackRate = f[h];
+        d(".sb").textContent = f[h] + "×";
+      };
+
+      const v = d(".seek");
+      const b = t => {
+        const e = v.getBoundingClientRect();
+        r.currentTime = Math.max(0, Math.min(1, (t.clientX - e.left) / e.width)) * (r.duration || 0);
+      };
+
+      v.onpointerdown = t => {
+        b(t);
+        v.setPointerCapture(t.pointerId);
+        v.onpointermove = b;
+      };
+
+      v.onpointerup = () => (v.onpointermove = null);
+
+      if (!i) {
+        d(".fs").onclick = () => {
+          if (document.fullscreenElement) {
+            document.exitFullscreen();
+          } else if (s.requestFullscreen) {
+            s.requestFullscreen();
+          } else if (r.webkitEnterFullscreen) {
+            r.webkitEnterFullscreen();
+          }
+        };
+
+        d(".pip").onclick = () => {
+          if (document.pictureInPictureElement) {
+            document.exitPictureInPicture();
+          } else if (r.requestPictureInPicture) {
+            r.requestPictureInPicture().catch(() => l("PiP not supported"));
+          }
+        };
+      }
+
+      s.onmousemove = () => {
+        s.classList.remove("idle");
+        clearTimeout(m);
+        m = setTimeout(() => s.classList.add("idle"), 2200);
+      };
+
+      s.onkeydown = t => {
+        const e = t.key;
+        if (e === " " || e === "k") {
+          t.preventDefault();
+          g();
+        } else if (e === "ArrowRight") {
+          t.stopPropagation();
+          r.currentTime += 5;
+        } else if (e === "ArrowLeft") {
+          t.stopPropagation();
+          r.currentTime -= 5;
+        } else if (e === "m") {
+          d(".mu").click();
+        } else if (e === "f" && !i) {
+          d(".fs").click();
+        }
+      };
+
+      r.play().catch(() => {});
+      s.focus();
+      return r;
+    }
+
+    async function x(n) {
+      a.cur = n;
+      const o = a.items[n];
+      const i = o.d;
+      const s = i.media_type;
+
+      t("#modal").classList.add("open");
+      document.body.style.overflow = "hidden";
+      t("#mT").textContent = i.title;
+      t("#mM").textContent = [
+        r[s],
+        i.center,
+        i.date_created && new Date(i.date_created).toLocaleDateString("en-US", { dateStyle: "long" })
+      ].filter(Boolean).join(" · ");
+      t("#mD").textContent = (i.description || "").replace(/<[^>]+>/g, "");
+      t("#mK").innerHTML = (i.keywords || []).slice(0, 10).map(t => `<span>${c(t)}</span>`).join("");
+      t("#mL").href = "https://images.nasa.gov/details/" + encodeURIComponent(i.nasa_id);
+      t("#stage").innerHTML = o.thumb && s === "image" ? `<img src="${c(o.thumb)}" alt="">` : "";
+      t("#mO").innerHTML = '<p class="hint">Loading available files…</p>';
+      a.files = [];
+      H();
+
+      try {
+        const l = await fetch(`${e}/asset/${encodeURIComponent(i.nasa_id)}`);
+        const r = await l.json();
+        if (a.cur !== n) return;
+
+        const u = r.collection.items
+          .map(t => t.href.replace(/^http:/, "https:"))
+          .filter(t => !/\.(json|srt|vtt|txt)$/i.test(t));
+
+        let m = [];
+        if (s === "image") {
+          m = [
+            ["Original", "orig", "Full resolution"],
+            ["Large", "large", "Great for screens"],
+            ["Medium", "medium", "Web & social"],
+            ["Small", "small", "Quick preview"]
+          ]
+            .map(t => ({
+              n: t[0],
+              s: t[2],
+              u: u.find(e => e.includes("~" + t[1] + "."))
+            }))
+            .filter(t => t.u);
+        } else if (s === "video") {
+          m = u
+            .filter(t => /\.mp4$/i.test(t))
+            .map(t => ({
+              n: /orig/.test(t)
+                ? "Original"
+                : /large/.test(t)
+                ? "HD"
+                : /medium/.test(t)
+                ? "Standard"
+                : /small/.test(t)
+                ? "Compact"
+                : /mobile/.test(t)
+                ? "Mobile"
+                : "Video",
+              s: "MP4 video",
+              u: t
+            }));
+        } else {
+          m = u
+            .filter(t => /\.(mp3|wav|m4a)$/i.test(t))
+            .map(t => ({
+              n: /orig/.test(t) ? "Original" : "MP3",
+              s: "Audio file",
+              u: t
+            }));
+        }
+
+        m = m.filter((t, e) => m.findIndex(item => item.u === t.u) === e);
+        if (!m.length) throw 0;
+
+        const p = { Original: 0, HD: 1, Standard: 2, Compact: 3, Mobile: 4 };
+        if (s !== "image") {
+          m.sort((t, e) => (p[t.n] ?? 9) - (p[e.n] ?? 9));
+        }
+
+        const g = {};
+        m.forEach(t => {
+          g[t.n] = (g[t.n] || 0) + 1;
+          if (g[t.n] > 1) t.n += " " + g[t.n];
+        });
+
+        a.files = m;
+        t("#mO").innerHTML = m
+          .map((t, e) => `
+            <div class="dl ${e === 0 ? "best" : ""}" data-k="${e}">
+              <div class="n">
+                <b>${t.n}${e === 0 ? '<span class="tg">BEST</span>' : ""}</b>
+                <small>${t.s} · .${t.u.split(".").pop().toLowerCase()}<span class="sz"></span></small>
+              </div>
+              <button>Download</button>
+              <div class="bar"></div>
+            </div>
+          `)
+          .join("");
+
+        m.forEach(async (t, e) => {
+          let o = 0;
+          try {
+            o = +(await fetch(t.u, { method: "HEAD" })).headers.get("content-length") || 0;
+          } catch (i) {}
+
+          if (!o) {
+            try {
+              const e = await fetch(t.u, { headers: { Range: "bytes=0-0" } });
+              const n = e.headers.get("content-range");
+              o = n ? +n.split("/")[1] : 0;
+              if (e.body && e.body.cancel) e.body.cancel();
+            } catch (i) {}
+          }
+
+          const i = document.querySelector(`.dl[data-k="${e}"] .sz`);
+          if (o && i && a.cur === n) {
+            i.textContent = " · " + d(o);
+          }
+        });
+
+        if (s === "image") {
+          t("#stage").innerHTML = `<img src="${c((m.find(t => t.n === "Large") || m[0]).u)}" alt="${c(i.title)}">`;
+        } else {
+          const e = Math.max(0, m.findIndex(t => /Standard|HD/.test(t.n)));
+          a.pk = e;
+          $(t("#stage"), s, m[e].u, o.thumb);
+          C();
+        }
+      } catch (e) {
+        t("#mO").innerHTML = '<p class="hint">No downloadable file found. Use the NASA page link.</p>';
+      }
+    }
+
+    function C() {
+      document.querySelectorAll(".dl").forEach(t => t.classList.toggle("on-play", +t.dataset.k === a.pk));
+    }
+
+    function M() {
+      t("#modal").classList.remove("open");
+      document.body.style.overflow = "";
+      t("#stage").innerHTML = "";
+      a.cur = -1;
+    }
+
+    function S(t) {
+      const e = a.cur + t;
+      if (e >= 0 && e < a.items.length) x(e);
+    }
+
+    function _() {
+      const e = Object.keys(o).length;
+      t("#fc").textContent = e > 99 ? "99+" : e;
+      t("#fc").hidden = !e;
+      t("#favBtn").classList.toggle("has", e > 0);
+    }
+
+    function P(t, e) {
+      e = e || a.items.find(e => e.d.nasa_id === t) || o[t];
+      if (e) {
+        if (o[t]) {
+          delete o[t];
+          l("Removed from saved");
+        } else {
+          o[t] = { d: e.d, thumb: e.thumb };
+          l("Saved");
+        }
+        s("af", o);
+        _();
+        if (a.view === "f" && a.cur < 0) {
+          q();
+        } else {
+          document.querySelectorAll(".fv").forEach(t => t.classList.toggle("on", Boolean(o[t.dataset.id])));
+        }
+        H();
+      }
+    }
+
+    function q() {
+      a.view = "f";
+      a.page = -1;
+      a.tok = (a.tok || 0) + 1;
+      p = !1;
+      g = null;
+      m = !1;
+      a.items = Object.values(o);
+      T();
+      if (!a.items.length) {
+        t("#grid").innerHTML = '<p class="empty">Nothing saved yet. Tap the bookmark on any video.</p>';
+      }
+      t("#grid").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function H() {
+      const e = t("#mF");
+      if (!e) return;
+      const n = a.cur >= 0 && a.items[a.cur] && o[a.items[a.cur].d.nasa_id];
+      e.classList.toggle("on", Boolean(n));
+      e.querySelector("span").textContent = n ? "Saved" : "Save";
+    }
+
+    async function E(t, e, n) {
+      const a = n && n.querySelector("button");
+      const o = n && n.querySelector(".bar");
+      const i = t.split("?")[0].split(".").pop();
+      if (a) a.textContent = "0%";
+
+      try {
+        const s = await fetch(t);
+        if (!s.ok) throw 0;
+        const c = +s.headers.get("content-length") || 0;
+        const r = s.body.getReader();
+        const u = [];
+        let m = 0;
+
+        while (true) {
+          const { done: t, value: e } = await r.read();
+          if (t) break;
+          u.push(e);
+          m += e.length;
+          if (c && n) {
+            const t = Math.round((m / c) * 100);
+            a.textContent = t + "%";
+            o.style.width = t + "%";
+          } else if (a) {
+            a.textContent = d(m);
+          }
+        }
+
+        const p = document.createElement("a");
+        p.href = URL.createObjectURL(new Blob(u));
+        p.download = e + "." + i;
+        document.body.appendChild(p);
+        p.click();
+        p.remove();
+        setTimeout(() => URL.revokeObjectURL(p.href), 4000);
+
+        if (a) {
+          a.textContent = "✓ Done";
+          if (o) o.style.width = "100%";
+        }
+        l("Download complete");
+        setTimeout(() => {
+          if (a) a.textContent = "Download";
+          if (o) o.style.width = 0;
+        }, 2500);
+      } catch (e) {
+        window.open(t, "_blank");
+        if (a) a.textContent = "Download";
+        l("Opened in a new tab — save it from there");
+      }
+    }
+
+    addEventListener("scroll", w, { passive: true });
+    addEventListener("resize", w);
+
+    t("#grid").onclick = t => {
+      const e = t.target.closest(".fv");
+      if (e) {
+        t.stopPropagation();
+        P(e.dataset.id);
+        return;
+      }
+      const n = t.target.closest(".card");
+      if (n) x(+n.dataset.i);
+    };
+
+    t("#mO").onclick = e => {
+      const n = e.target.closest(".dl");
+      if (!n) return;
+      const o = a.files[+n.dataset.k];
+      if (e.target.tagName === "BUTTON") {
+        E(o.u, a.items[a.cur].d.nasa_id + "-" + o.n.toLowerCase(), n);
+      } else if (a.items[a.cur].d.media_type !== "image") {
+        const e = t("#stage video, #stage audio");
+        const i = e ? e.currentTime : 0;
+        a.pk = +n.dataset.k;
+        $(t("#stage"), a.items[a.cur].d.media_type, o.u, a.items[a.cur].thumb, i);
+        C();
+      }
+    };
+
+    t("#mx").onclick = M;
+    t("#mp").onclick = () => S(-1);
+    t("#mn").onclick = () => S(1);
+    t("#modal").onclick = t => {
+      if (t.target.id === "modal") M();
+    };
+
+    addEventListener("keydown", t => {
+      if (a.cur < 0) return;
+      if (t.key === "Escape") M();
+      if (t.key === "ArrowLeft") S(-1);
+      if (t.key === "ArrowRight") S(1);
+    });
+
+    t("#favBtn").onclick = q;
+    t(".brand").onclick = () => {
+      if (a.view === "f") b();
+    };
+
+    t("#mF").onclick = () => P(a.items[a.cur].d.nasa_id, a.items[a.cur]);
+
+    t("#mC").onclick = () => {
+      const t = "https://images.nasa.gov/details/" + a.items[a.cur].d.nasa_id;
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+        .then(() => l("Link copied"), () => prompt("Copy link:", t));
+    };
+
+    _();
+    b();
+  </script>
+</body>
+</html>
